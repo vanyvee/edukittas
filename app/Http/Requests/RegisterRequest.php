@@ -20,9 +20,9 @@ class RegisterRequest extends FormRequest
               'role'       => 'sometimes|in:ceo,supervisor,cook,cashier,waiter',
             'address'    => 'required|string|max:255',
             'password' => 'required|string|min:6|confirmed',
-            'dob_day'    => 'sometimes |integer|min:1|max:31',
-            'dob_month'  => 'sometimes |integer|min:1|max:12',
-            'dob_year'   => 'sometimes |integer|min:1970',
+            'day'    => 'sometimes|integer|min:1|max:31',
+            'month'  => 'sometimes|integer|min:1|max:12',
+            'year'   => 'sometimes|integer|min:1970',
         ];
     }
 }

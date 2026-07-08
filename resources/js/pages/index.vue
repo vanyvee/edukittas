@@ -52,7 +52,7 @@ const navItems = computed(() => {
   ]
 
   // Guest only — hide once logged in
-  if (!auth.isLoggedIn.value) {
+  if (!auth.isLoggedIn) {
     items.push(
       { key: 'Login',    label: 'Login',    icon: '🔑' },
       { key: 'Register', label: 'Register', icon: '📝' },

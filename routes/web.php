@@ -5,6 +5,11 @@ use App\Http\Controllers\OrderController;
 use App\Http\Controllers\AuthController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CustomerController;
+
+
+
+//use App\Models\Customer;
+//use Illuminate\Support\Facades\Hash;
 // ─────────────────────────────────────────
 // PUBLIC
 // ─────────────────────────────────────────
@@ -17,10 +22,10 @@ Route::get('/orders/{orderId}/track', [OrderController::class, 'track']);
 
 Route::get('/customer/lookup', [CustomerController::class, 'lookup']);
 Route::post('/customer/confirm-details', [CustomerController::class, 'confirmDetails']);
-Route::post('/register', [CustomerController::class, 'register'])->name('register');
+Route::post('/register', [CustomerController::class, 'register']);
 //routes/web.php
 
-// Route::get('/register', [AuthController::class, 'showRegister'])->name('register.form');
+ //Route::get('/register', [AuthController::class, 'showRegister'])->name('register.form');
 // Route::post('/register', [CustomerController::class, 'register'])->name('register');
 
 // Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
@@ -104,4 +109,25 @@ Route::post('/orders/{orderId}/payment', [OrderController::class, 'confirmPaymen
 });
 
 //Vue SPA catch-all — must be last
-Route::view('/{any}', 'app')->where('any', '.*');
+Route::get('/{any}', function () {
+    return view('app');
+})->where('any', '.*');
+
+
+
+
+
+// Route::get('/test-create', function () {
+
+//     $customer = Customer::create([
+//         'first_name' => 'Test',
+//         'surname'    => 'User',
+//         'username'   => 'tester',
+//         'phone'      => '08011111111',
+//         'sex'        => 'Male',
+//         'password'   => Hash::make('123456'),
+//         'address'    => 'Test Address',
+//     ]);
+
+//     return $customer;
+// });

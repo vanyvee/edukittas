@@ -16,7 +16,7 @@ const { handleSubmit, setErrors } = formStore.buildForm([
 
 const onSubmit = handleSubmit(async (values) => {
   const result = await auth.login(values.username, values.password)
-
+console.log(values)
   if (result.success) {
      switchTo('Home')
   } else {

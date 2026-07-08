@@ -3,7 +3,7 @@ import { useFormStore } from '@/stores/formStore'
 import { useAuthStore }       from '@/stores/auth'
 import { useRouter }          from 'vue-router'
 import FormField              from '@/components/FormField.vue'
-import { ref } from 'vue'
+import { ref, inject } from 'vue'
 
 const formStore = useFormStore()
 const auth      = useAuthStore()
@@ -20,9 +20,9 @@ const { handleSubmit, setErrors, resetForm } = formStore.buildForm([
   'password',
   'password_confirmation',
   'role',
-  'dob_day',
-  'dob_month',
-  'dob_year',
+  'day',
+  'month',
+  'year',
 ])
 
 const onSubmit = handleSubmit(async (values) => {
@@ -34,11 +34,14 @@ const onSubmit = handleSubmit(async (values) => {
     //   localStorage.setItem('tb_customer_uuid', result.data.user.uuid)
     // }
     resetForm()
- successMessage.value = '🎉 Account created! Please sign in.'
+  successMessage.value = auth.isLoggedIn.value
+    ? '✅ Staff account created!'
+    : '🎉 Account created! Please sign in.'
+
     setTimeout(() => {
       successMessage.value = ''
-      switchTo('Login')
-    }, 1500)
+      switchTo(auth.isLoggedIn.value ? 'Home' : 'Login')
+    }, 2000)
   } else {
     formStore.applyServerErrors({ setErrors }, result.error)
   }
@@ -111,13 +114,13 @@ const onSubmit = handleSubmit(async (values) => {
 
 <div class="flex gap-3">
     <div class="flex-1 min-w-0">
-      <FormField type="number" name="dob_day"   label="Day"  placeholder="DD" />
+      <FormField type="number" name="day"   label="Day"  placeholder="DD" />
     </div>
     <div class="flex-1 min-w-0">
-      <FormField type="number" name="dob_month" label="Month" placeholder="MM" />
+      <FormField type="number" name="month" label="Month" placeholder="MM" />
     </div>
     <div class="flex-1 min-w-0">
-      <FormField type="number" name="dob_year"  label="Year" placeholder="YYYY" />
+      <FormField type="number" name="year"  label="Year" placeholder="YYYY" />
     </div>
   </div>
        
@@ -145,7 +148,7 @@ const onSubmit = handleSubmit(async (values) => {
 
 
 <!-- Staff only fields -->
-<template v-if="auth.canViewAnalytics || auth.isAdmin">
+<template v-if="auth.canViewAnalytics?.value || auth.isAdmin?.value">
   <FormField
     type="select"
     name="role"
@@ -161,24 +164,31 @@ const onSubmit = handleSubmit(async (values) => {
 </template>
 
 
-
-
-
-
-        <FormField
+<div class="flex gap-3">
+  <div class="flex-1">
+     <FormField
           type="password"
           name="password"
           label="Password"
           placeholder="Create a password"
         />
 
-        <FormField
+  </div>
+  <div class="flex-1">
+    <FormField
           type="password"
           name="password_confirmation"
           label="Confirm Password"
           placeholder="Repeat your password"
         />
 
+  </div>
+</div>
+
+
+
+       
+       
         <!-- Server error -->
         <p v-if="auth.error && typeof auth.error === 'string'"
            class="text-xs text-secondary-300 text-center -mt-2">
@@ -211,7 +221,7 @@ const onSubmit = handleSubmit(async (values) => {
       <p class="text-center text-[0.65rem] text-neutral-500 tracking-wide pb-4">
         Already have an account?
         <button
-          @click="router.push('/login')"
+          @click="switchTo('Login')"
           class="text-primary-300 font-bold hover:text-primary-500 transition-colors duration-200"
         >
           Sign In

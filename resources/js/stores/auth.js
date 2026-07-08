@@ -41,10 +41,33 @@ export const useAuthStore = defineStore('auth', () => {
   const register = async (form) => {
   error.value   = null
   loading.value = true
+  const rawForm = JSON.parse(JSON.stringify(form))
+  const sometimesFields = ['role', 'day', 'month', 'year']
+  const cleanForm = Object.fromEntries(
+  Object.entries(rawForm).filter(([key, value]) => {
+    if (sometimesFields.includes(key) && (value === '' || value === null || value === undefined)) {
+      return false  // drop it entirely
+    }
+    return true  // keep everything else including empty nullable fields
+  })
+)
+  // endpoint determined by who is logged in
+  // const endpoint = auth.isAdmin?.value || auth.canViewAnalytics?.value
+  //   ? '/staff/register'
+  //   : '/register'
+const endpoint = ['staff', 'admin'].includes(user.value?.guard)
+  ? '/staff/register'
+  : '/register'
 
   try {
-    const { data } = await axios.post('/register', form)
-    user.value = data.user
+    const { data } = await axios.post(endpoint, cleanForm)
+
+    console.log('register response:', data)
+    // only set user if customer self-registering
+    // staff registration doesn't log in as that staff
+    if (!isLoggedIn.value) {
+      user.value = data.user
+    }
   
 
     return { success: true, data }   // ← inclulde data now
@@ -58,12 +81,13 @@ export const useAuthStore = defineStore('auth', () => {
   }
 }
   // ─── Login ────────────────────────────────────────────────────────────
-  const login = async (identifier, password) => {
+  const login = async (username, password) => {
     error.value   = null
     loading.value = true
 
     try {
-      const { data } = await axios.post('/login', { identifier, password })
+      const { data } = await axios.post('/login', { username, password })
+      console.log('response:', data)
       user.value    = data.user
       checked.value = true
       return { success: true }
