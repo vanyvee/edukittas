@@ -13,6 +13,8 @@ const props = defineProps({
   }
 })
 
+const emit = defineEmits(['action'])
+
 // State
 const isHovered       = ref(false)
 const activeKey       = ref(null)
@@ -99,13 +101,17 @@ onMounted(() => {
             Menu
           </span>
         </div>
+        
+
+
+
 
         <!-- Nav buttons — styled exactly like attendance button -->
         <div class="flex flex-col gap-1.5 p-2 flex-1 overflow-y-auto">
           <button
             v-for="navItem in navItems"
             :key="navItem.key"
-            @click="switchTo(navItem.key)"
+            @click="navItem.action ? emit('action', navItem.key) : switchTo(navItem.key)"
             class="flex items-center gap-2.5 w-full px-3 py-2.5 rounded-lg text-sm
             font-medium transition-all touch-manipulation border text-left"
             :class="activeKey === navItem.key

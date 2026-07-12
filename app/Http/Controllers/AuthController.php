@@ -24,16 +24,14 @@ public function me(Request $request)
             $user = Auth::guard($guard)->user();
 
             return response()->json([
-                'guard' => $guard === 'web' ? 'staff' : $guard,
-                'role' => $user->role ?? null,
+                'guard' => $guard,
                 'user' => $user,
             ]);
         }
     }
 
     return response()->json([
-        'guard' => 'guest',
-        'role' => null,
+        'guard' => null,
         'user' => null,
     ]);
 }

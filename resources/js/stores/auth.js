@@ -6,15 +6,17 @@ export const useAuthStore = defineStore('auth', () => {
 
   // ─── State ────────────────────────────────────────────────────────────
   const user    = ref(null)
+  const guard    = ref(null)
+ // const role    = ref(null)
   const checked = ref(false)  // has me() finished at least once?
   const loading = ref(false)
   const error   = ref(null)
 
   // ─── Computed ─────────────────────────────────────────────────────────
   const isLoggedIn       = computed(() => !!user.value)
-  const isStaff          = computed(() => user.value?.guard === 'staff')
-  const isCustomer       = computed(() => user.value?.guard === 'customer')
-  const isAdmin          = computed(() => user.value?.guard === 'admin')
+  const isStaff          = computed(() => guard.value === 'web')
+  const isCustomer       = computed(() => guard.value === 'customer')
+  const isAdmin          = computed(() => guard.value === 'admin')
   const isGuest          = computed(() => !user.value)
   const isCeo            = computed(() => user.value?.role === 'ceo')
   const isCook           = computed(() => user.value?.role === 'cook')
@@ -30,6 +32,7 @@ export const useAuthStore = defineStore('auth', () => {
     try {
       const { data } = await axios.get('/auth/me')
       user.value = data.user ?? null
+      guard.value = data.guard ?? null
     } catch (_) {
       user.value = null
     } finally {
@@ -51,11 +54,8 @@ export const useAuthStore = defineStore('auth', () => {
     return true  // keep everything else including empty nullable fields
   })
 )
-  // endpoint determined by who is logged in
-  // const endpoint = auth.isAdmin?.value || auth.canViewAnalytics?.value
-  //   ? '/staff/register'
-  //   : '/register'
-const endpoint = ['staff', 'admin'].includes(user.value?.guard)
+
+const endpoint = ['staff', 'admin'].includes(guard.value)
   ? '/staff/register'
   : '/register'
 
@@ -63,13 +63,7 @@ const endpoint = ['staff', 'admin'].includes(user.value?.guard)
     const { data } = await axios.post(endpoint, cleanForm)
 
     console.log('register response:', data)
-    // only set user if customer self-registering
-    // staff registration doesn't log in as that staff
-    if (!isLoggedIn.value) {
-      user.value = data.user
-    }
-  
-
+   
     return { success: true, data }   // ← inclulde data now
 
   } catch (err) {
@@ -89,6 +83,7 @@ const endpoint = ['staff', 'admin'].includes(user.value?.guard)
       const { data } = await axios.post('/login', { username, password })
       console.log('response:', data)
       user.value    = data.user
+      guard.value = data.guard
       checked.value = true
       return { success: true }
 
@@ -102,24 +97,25 @@ const endpoint = ['staff', 'admin'].includes(user.value?.guard)
   }
 
   // ─── Logout ───────────────────────────────────────────────────────────
-  const logout = async () => {
-    loading.value = true
-    try {
-      await axios.post('/logout')
-    } catch (_) {
-      // never block logout
-    } finally {
-      user.value    = null
-      checked.value = false
-      loading.value = false
-      error.value   = null
-    }
+ const logout = async () => {
+  loading.value = true
+  try {
+    await axios.post('/logout')
+  } catch (_) {
+    // never block logout
+  } finally {
+    user.value    = null
+    guard.value = null
+    // checked stays true — we know the auth state, it's just "no user"
+    loading.value = false
+    error.value   = null
   }
+}
 
   return {
-    user, checked, loading, error,
+    user, guard, checked, loading, error,
     isLoggedIn, isStaff, isCustomer, isGuest,
-    isCeo, isCook, isCashier, isSupervisor,
+    isCeo, isCook, isCashier, isSupervisor,isAdmin,
     canViewAnalytics, canCancelOrder, canMarkReady, isWaiter,
     me, register, login, logout,
   }

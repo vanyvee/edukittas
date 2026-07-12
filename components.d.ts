@@ -12,6 +12,7 @@ export {}
 declare module 'vue' {
   export interface GlobalComponents {
     '(2)': typeof import('./resources/js/components/MyAccordion (2).vue')['default']
+    AccordionHeader: typeof import('./resources/js/components/AccordionHeader.vue')['default']
     AccordionNavBar: typeof import('./resources/js/components/AccordionNavBar.vue')['default']
     AssignTeacher: typeof import('./resources/js/components/AssignTeacher.vue')['default']
     AuthDashboard: typeof import('./resources/js/components/AuthDashboard.vue')['default']
@@ -29,6 +30,7 @@ declare module 'vue' {
     MainCarousel: typeof import('./resources/js/components/MainCarousel.vue')['default']
     MainCarousel2: typeof import('./resources/js/components/MainCarousel2.vue')['default']
     MainView: typeof import('./resources/js/components/MainView.vue')['default']
+    MaterialDetail: typeof import('./resources/js/components/MaterialDetail.vue')['default']
     MobileProfilePanel: typeof import('./resources/js/components/MobileProfilePanel.vue')['default']
     MyAccordion: typeof import('./resources/js/components/MyAccordion.vue')['default']
     MyAccordionNew: typeof import('./resources/js/components/MyAccordionNew.vue')['default']
@@ -37,6 +39,8 @@ declare module 'vue' {
     PcProfilePanel: typeof import('./resources/js/components/PcProfilePanel.vue')['default']
     ProfileView: typeof import('./resources/js/components/ProfileView.vue')['default']
     ProfileView2: typeof import('./resources/js/components/ProfileView2.vue')['default']
+    RawMaterial: typeof import('./resources/js/components/RawMaterial.vue')['default']
+    RawMaterials: typeof import('./resources/js/components/RawMaterials.vue')['default']
     RegisterForm: typeof import('./resources/js/components/RegisterForm.vue')['default']
     Rough: typeof import('./resources/js/components/rough.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']

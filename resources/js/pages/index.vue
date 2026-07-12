@@ -51,41 +51,48 @@ const navItems = computed(() => {
     { key: 'Home', label: 'Home', icon: '🏠' },
   ]
 
-  // Guest only — hide once logged in
   if (!auth.isLoggedIn) {
     items.push(
       { key: 'Login',    label: 'Login',    icon: '🔑' },
       { key: 'Register', label: 'Register', icon: '📝' },
+       { key: 'Stock', label: 'Stock', icon: '📝' },
     )
   }
 
-  // All staff
-  if (auth.isStaff.value) {
+  if (auth.isLoggedIn) {
+    items.push({ key: 'Logout', label: 'Logout', icon: '🚪', action: true })
+  }
+
+  // Register still visible for ceo/admin even when logged in
+  if (auth.isCeo || auth.isAdmin) {
+    items.push({ key: 'Register', label: 'Register', icon: '📝' })
+  }
+
+  if (auth.isStaff) {
     items.push({ key: 'Orders', label: 'Orders', icon: '🧾' })
   }
-
-  // Cook only
-  if (auth.isCook.value) {
+  if (auth.isCook) {
     items.push({ key: 'Kitchen', label: 'Kitchen', icon: '👨‍🍳' })
   }
-
-  // CEO + Supervisor
-  if (auth.canViewAnalytics.value) {
+  if (auth.canViewAnalytics) {
     items.push({ key: 'Analytics', label: 'Analytics', icon: '📊' })
   }
-
-  // CEO + Supervisor
-  if (auth.isCeo.value || auth.isSupervisor.value) {
+  if (auth.isCeo || auth.isSupervisor) {
     items.push({ key: 'Products', label: 'Products', icon: '🍽️' })
   }
-
-  // Logged in customer
-  if (auth.isCustomer.value) {
+  if (auth.isCustomer) {
     items.push({ key: 'Profile', label: 'Profile', icon: '👤' })
   }
 
   return items
 })
+
+const handleAction = async (key) => {
+  if (key === 'Logout') {
+    await auth.logout()
+    switchTo('Home')   // you already have this helper defined above
+  }
+}
 </script>
 
 <template>
@@ -98,7 +105,7 @@ const navItems = computed(() => {
   </div>
 
   <!-- App shell -->
-  <MainView ref="mainView" v-else :nav-items="navItems">
+  <MainView ref="mainView" v-else :nav-items="navItems"  @action="handleAction">
 
     <!-- Home section contains the carousel -->
     <template #Home>
@@ -117,6 +124,10 @@ const navItems = computed(() => {
       <RegisterForm />
     </template>
 
+
+    <template #Stock>
+      <RawMaterial />
+    </template>
     <!-- Staff sections — v-if adds role protection on top -->
     <!-- <template #Orders>
       <AllOrders v-if="auth.isStaff.value" />
