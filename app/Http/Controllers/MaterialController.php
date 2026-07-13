@@ -1,65 +1,44 @@
 <?php
 
+n<?php
+
 namespace App\Http\Controllers;
 
+use App\Services\MaterialService;
 use App\Models\Material;
-use Illuminate\Http\Request;
+use App\Http\Requests\MaterialRequest;
+use App\Http\Requests\RestockMaterialRequest;
 
 class MaterialController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+    public function __construct(protected MaterialService $service) {}
+
     public function index()
     {
-        //
+        return $this->service->list();
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+    public function store(MaterialRequest $request)
     {
-        //
+        $material = $this->service->create($request->validated());
+        return response()->json($material->load('logs'), 201);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
+    public function update(MaterialRequest $request, Material $material)
     {
-        //
+        $material = $this->service->update($material, $request->validated());
+        return response()->json($material->load('logs'));
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(MySchool $mySchool)
+    public function destroy(Material $material)
     {
-        //
+        $this->service->delete($material);
+        return response()->json(['message' => 'deleted']);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(MySchool $mySchool)
+    public function restock(RestockMaterialRequest $request, Material $material)
     {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, MySchool $mySchool)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(MySchool $mySchool)
-    {
-        //
+        $material = $this->service->restock($material, $request->validated());
+        return response()->json($material->load('logs'));
     }
 }

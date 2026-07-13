@@ -3,7 +3,7 @@ import { ref, computed, reactive } from 'vue'
 import { gsap } from 'gsap'
 import { useRouter, useRoute } from 'vue-router'
 import { useBreakpoints, breakpointsTailwind } from '@vueuse/core'
-
+import axios from 'axios'
 
 export const useMainStore = defineStore('mainStore', () => {
   const route = useRoute()
@@ -123,63 +123,76 @@ export const useMainStore = defineStore('mainStore', () => {
     editedItems.get(itemKey)[field] = item[field]
   }
 
-  const saveEdit = async (url, mainItemArray) => {
-    const payload = Array.from(editedItems.entries()).map(([id, changes]) => ({
-      id,
-      ...changes
-    }))
-     isLoading.value = true;
-     error.value = false
+  // ============ GENERIC: SAVE — create or update, single or array ============
+const saveItems = async (url, payload, targetArray, keyField = 'id') => {
+  isLoading.value = true
+  error.value = false
+  const items = Array.isArray(payload) ? payload : [payload]
 
-    try {
-      const returnedData = await $fetch(url,{
-        method: 'POST',
-        body: payload
-      })
-    
-      if (returnedData && Array.isArray(returnedData)) {
-        returnedData.forEach((object) => {
-          const index = mainItemArray.findIndex((s) => s.id === object.id)
-          if (index !== -1) {
-            mainItemArray[index] = { ...mainItemArray[index], ...object }
-          }
-        })
-        editedItems.clear()
-        editMode.value = false
-        error.value = false
+  try {
+    const { data } = await axios.post(url, { items })
+    const returned = Array.isArray(data) ? data : [data]
+
+    returned.forEach((object) => {
+      const index = targetArray.findIndex(i => i[keyField] === object[keyField])
+      if (index !== -1) {
+        targetArray[index] = { ...targetArray[index], ...object }
+      } else {
+        targetArray.push(object)
       }
-    } catch (err) {
-      error.value = true
-      console.error('save edit error', err)
-    }finally{
-      isLoading.value = false
-    }
+    })
+
+    editedItems.clear()
+    editMode.value = false
+    return returned
+  } catch (err) {
+    error.value = true
+    console.error(`save to ${url} failed:`, err)
+  } finally {
+    isLoading.value = false
   }
+}
+
 
   // ============ ACTIONS: DELETION ============
-  const deleteSelectedItems = async (items, keyField = 'id', apiUrl = '/api/delete') => {
+ // Delete — one, some, or all. ids for specific rows, all:true skips
+// id-enumeration entirely so the backend can run a single bulk DELETE.
+const deleteItems = async (url, targetArray, { ids = [], all = false } = {}) => {
+  isLoading.value = true
+  error.value = false
+  try {
+    await axios.delete(url, { data: all ? { all: true } : { ids } })
 
-    const keysToDelete = Array.from(selectedItems.keys())
-    
-    isLoading.value = true
-    error.value = false
-    try{
-      await $fetch(apiUrl, {
-        mehtod: 'POST',
-        body: { ids: keysToDelete }
-      })
-      //remove from local array
-      items.splice(0, items.length, ...items.filter((item)=>!keysToDelete.includes(item[keyField]))
-    )
-    clearSelection()
-    } catch(err) {
-      error.value = true
-      console.error('delete error:', err)
-    }finally{
-      isLoading.value = false
+    if (all) {
+      targetArray.splice(0, targetArray.length)
+    } else {
+      targetArray.splice(0, targetArray.length, ...targetArray.filter(item => !ids.includes(item.id)))
     }
+    clearSelection()
+  } catch (err) {
+    error.value = true
+    console.error(`delete to ${url} failed:`, err)
+  } finally {
+    isLoading.value = false
   }
-    
+}
+
+// ============ GENERIC: FETCH — one, some, or all ============
+const fetchItems = async (url, targetArray, ids = null) => {
+  isLoading.value = true
+  error.value = false
+  try {
+    const params = ids ? { ids: ids.join(',') } : {}
+    const { data } = await axios.get(url, { params })
+    targetArray.splice(0, targetArray.length, ...data)
+    return data
+  } catch (err) {
+    error.value = true
+    console.error(`fetch from ${url} failed:`, err)
+  } finally {
+    isLoading.value = false
+  }
+}
 
   // ============ ACTIONS: ATTENDANCE ============
   const registerAbsentees = async () => {

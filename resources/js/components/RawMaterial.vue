@@ -133,7 +133,7 @@ function handleRestock({ material, qty }) {
 
     <!-- Delete — only once a tab has been clicked -->
     <button
-      v-if="tabClicked"
+      v-if="store.selectedItem"
       @click="store.deleteSelected()"
       class="px-2.5 py-1.5 rounded-lg text-xs sm:text-sm font-medium
       bg-danger text-white hover:bg-danger/90 transition-colors"
