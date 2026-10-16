@@ -218,7 +218,7 @@ const displayConfig = {
 
 <template #accordion-body="{ item }">
   <AssignTeacher :item="item" :current-user="currentUser" />
-    </template>
+</template>
 
      <template #profile ="{ item }">
       <div class="flex-1 overflow-y-auto pt-2 flex justify-center">

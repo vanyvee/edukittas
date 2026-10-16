@@ -20,8 +20,8 @@ SET time_zone = "+00:00";
 --
 -- Database: `byti`
 --
-CREATE DATABASE IF NOT EXISTS `byti` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-USE `byti`;
+CREATE DATABASE IF NOT EXISTS `edukittas` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+USE `edukittas`;
 
 -- --------------------------------------------------------
 

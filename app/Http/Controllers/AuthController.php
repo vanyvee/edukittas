@@ -9,9 +9,14 @@ use Illuminate\Validation\ValidationException;
 use App\Models\User;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Auth;
+
+
 class AuthController extends Controller
 {
-
+public function __construct(protected AuthService $auth)
+    {
+    }
+ 
 public function showRegister()
 {
     return view('register');
@@ -70,6 +75,24 @@ public function logout(Request $request)
 
 
 
+
+
+
+
+
+    
+    public function switchSchool(Request $request): JsonResponse
+    {
+        $data = $request->validate(['school_id' => ['required', 'exists:schools,id']]);
+ 
+        try {
+            $this->auth->switchSchool($data['school_id']);
+        } catch (\DomainException $e) {
+            return response()->json(['message' => $e->getMessage()], 403);
+        }
+ 
+        return response()->json(['school_id' => $data['school_id']]);
+    }
 
 
     // public function logout(Request $request)

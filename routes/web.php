@@ -5,7 +5,7 @@ use App\Http\Controllers\OrderController;
 use App\Http\Controllers\AuthController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CustomerController;
-
+use App\Http\Controllers\GuardianClaimController;
 
 
 //use App\Models\Customer;
@@ -25,6 +25,23 @@ Route::post('/customer/confirm-details', [CustomerController::class, 'confirmDet
 Route::post('/register', [CustomerController::class, 'register']);
 //routes/web.php
 
+
+
+
+
+ 
+Route::get('/guardian/claim/{guardian}', [GuardianClaimController::class, 'show'])
+    ->name('guardian.claim.show');
+ 
+Route::post('/guardian/claim/{guardian}', [GuardianClaimController::class, 'store'])
+    ->name('guardian.claim.store');
+ 
+// The claim form's action attribute must post to the SAME signed URL the
+// email linked to (including its signature+expires query string), not a
+// bare route() call — otherwise hasValidSignature() fails on the POST.
+// e.g. in the guardian.claim view:
+//   <form method="POST" action="{{ url()->full() }}">
+ 
  //Route::get('/register', [AuthController::class, 'showRegister'])->name('register.form');
 // Route::post('/register', [CustomerController::class, 'register'])->name('register');
 
