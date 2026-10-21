@@ -17,10 +17,10 @@ return new class extends Migration
             $table->unsignedMediumInteger('subject_id');
             $table->unsignedBigInteger('student_id');
             $table->enum('sub_type',['s','a','b'])->default('b');
+            $table->unsignedTinyInteger('other_test')->nullable();
             $table->unsignedMediumInteger('class_id');
             $table->tinyInteger('first_test')->nullable();
             $table->tinyInteger('second_test')->nullable();
-               $table->tinyInteger('assignment')->nullable();
             $table->tinyInteger('exam')->nullable();
             $table->boolean('compiled')->default(0);
             $table->enum('term',['1','2','3']);

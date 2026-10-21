@@ -11,17 +11,20 @@ class Cbt extends Model
 {
     public const TYPES = ['exam', 'test', 'practice', 'quiz'];
 
-    // The host is set with $cbt->host()->associate($enrollmentOrUser), never mass-assigned.
+// The host is set with $cbt->host()->associate($enrollmentOrUser), never mass-assigned.
     protected $fillable = [
-        'school_id', 'title', 'type', 'duration_minutes', 'opens_at', 'closes_at', 'expires_at',
+        'school_id', 'title', 'type', 'duration_minutes', 'opens_at', 'closes_at', 'expires_at', 'audience',
     ];
 
-    protected $casts = [
+     protected $casts = [
         'opens_at' => 'datetime',
         'closes_at' => 'datetime',
         'expires_at' => 'datetime',
+        'notified_at' => 'datetime',
+        'audience' => 'array',       // null = whole school, or {"classes":[ids], "enrollments":[ids]}
     ];
 
+    
     public function school(): BelongsTo
     {
         return $this->belongsTo(School::class);
@@ -54,9 +57,27 @@ class Cbt extends Model
             || $this->closes_at?->isPast());
     }
 
-    /** Same school for now; add class or assignment rules here later. */
+    /**
+     * Is this person allowed to take this CBT?
+     * Same school is always required. If the CBT has an audience, only the named classes and the
+     * named students (enrollments) may take it; teachers and staff are not part of a targeted audience.
+     */
     public function canBeTakenBy(Model $taker): bool
     {
-        return (int) $taker->school_id === (int) $this->school_id;
+        if ((int) $taker->school_id !== (int) $this->school_id) {
+            return false;
+        }
+ 
+        $audience = $this->audience;
+        if ($audience === null) {
+            return true;                                   // open to the whole school
+        }
+ 
+        if ($taker->getMorphClass() !== (new Enrollment)->getMorphClass()) {
+            return false;
+        }
+ 
+        return in_array((int) $taker->getKey(), $audience['enrollments'] ?? [], true)
+            || in_array((int) $taker->class_id, $audience['classes'] ?? [], true);
     }
 }

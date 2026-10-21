@@ -19,7 +19,10 @@ return new class extends Migration
 
             $table->string('title');
             $table->enum('type', ['exam', 'test', 'practice', 'quiz']);
-
+            // Who it is for. NULL = the whole school. Otherwise {"classes":[class ids], "enrollments":[enrollment ids]}.
+            $table->json('audience')->nullable();
+            $table->dateTime('notified_at')->nullable();                  // set once students have been told
+ 
             $table->unsignedSmallInteger('duration_minutes')->nullable(); // personal timer
             $table->dateTime('opens_at')->nullable();
             $table->dateTime('closes_at')->nullable();                    // hard stop for everyone
@@ -28,6 +31,7 @@ return new class extends Migration
             $table->dateTime('expires_at')->nullable()->index();
 
             $table->timestamps();
+
         });
     }
 

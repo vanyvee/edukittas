@@ -18,7 +18,12 @@ return new class extends Migration
             // Who took it: an Enrollment (student) or a User (teacher/staff).
             $table->morphs('taker');
 
-            $table->dateTime('started_at');
+
+$table->string('cbt_title')->nullable()->after('cbt_id');
+        $table->unsignedMediumInteger('subject_id')->nullable() // no FK on purpose
+        $table->dateTime('pushed_at')->nullable();
+        $table->index(['subject_id', 'submitted_at']);
+$table->dateTime('started_at');
             $table->dateTime('ends_at')->nullable();       // computed once at start
             $table->dateTime('submitted_at')->nullable();
 
