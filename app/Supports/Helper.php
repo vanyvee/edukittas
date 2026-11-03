@@ -1,6 +1,6 @@
 <?php
  
-namespace App\Support;
+namespace App\Supports;
  
 /**
  * A plain, dependency-free helper for the "is there an active school in

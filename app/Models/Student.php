@@ -46,13 +46,6 @@ class Student extends Authenticatable
 // }
    
 
-    protected $hidden = ['password', 'nin'];
-
-    protected $casts = [
-        'dob'             => 'date',
-       // 'status'          => StudentStatus::class,
-        'password'        => 'hashed',
-    ];
 
 
 
@@ -80,6 +73,7 @@ class Student extends Authenticatable
  
     protected $casts = [
         'dob' => 'date',
+        'password'        => 'hashed',
     ];
  
     public function guardian(): BelongsTo

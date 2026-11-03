@@ -47,19 +47,19 @@ protected static function booted(): void
     });
 }
 
-public function scopeStatus(Builder $query, string $status): Builder
-{
-    $query->withoutGlobalScope('active'); // only lifts the status default — school stays locked
+// public function scopeStatus(Builder $query, string $status): Builder
+// {
+//     $query->withoutGlobalScope('active'); // only lifts the status default — school stays locked
 
-    return match ($status) {
-        'current'       => $query->whereIn('status', ['0', '1']),
-        'graduated' => $query->where('status', '2'),
-        'active'    => $query->where('status', '1'),
-        'inactive'  => $query->where('status', '0'),
-         default     => throw new \InvalidArgumentException("Unknown student status filter: {$status}"),
+//     return match ($status) {
+//         'current'       => $query->whereIn('status', ['0', '1']),
+//         'graduated' => $query->where('status', '2'),
+//         'active'    => $query->where('status', '1'),
+//         'inactive'  => $query->where('status', '0'),
+//          default     => throw new \InvalidArgumentException("Unknown student status filter: {$status}"),
     
-    };
-}
+//     };
+// }
 // The safe way to get `User::teachers()` alone returning only active
 // teachers at the current session's school — no global scope needed.
 // Nothing calls ->teachers() during login or the cross-school
@@ -153,33 +153,33 @@ public function scopeForSchool(Builder $query): Builder
     
 
 
-    public function isCeo(): bool {return $this->role === 'ceo';}
-    public function isSupervisor(): bool {return $this->role ==='supervisor';}
-    public function isCook(): bool {return $this->role === 'cook';}
-    public function isCashier(): bool {return $this->role === 'cashier';}
+    // public function isCeo(): bool {return $this->role === 'ceo';}
+    // public function isSupervisor(): bool {return $this->role ==='supervisor';}
+    // public function isCook(): bool {return $this->role === 'cook';}
+    // public function isCashier(): bool {return $this->role === 'cashier';}
 
-    public function canViewAnalytics(): bool
-    {
-        return in_array($this-role, ['ceo','supervisor',]);
-    }
-    public function canManageProduct(): bool
-    {
-        return in_array($this->role, ['ceo','supervisor']);
-    }
+    // public function canViewAnalytics(): bool
+    // {
+    //     return in_array($this-role, ['ceo','supervisor',]);
+    // }
+    // public function canManageProduct(): bool
+    // {
+    //     return in_array($this->role, ['ceo','supervisor']);
+    // }
 
-    public function canCookOrder(): bool
-    {
-        return $this->role === 'cook';
-    }
+    // public function canCookOrder(): bool
+    // {
+    //     return $this->role === 'cook';
+    // }
 
-    public function canProcessPayment(): bool
-    {
-        return in_array($this-role, ['ceo', 'cashier']);
-    }
+    // public function canProcessPayment(): bool
+    // {
+    //     return in_array($this-role, ['ceo', 'cashier']);
+    // }
 
 
-    public function orders()
-    {
-        return $this->hasMany(Order::class);
-    }
+    // public function orders()
+    // {
+    //     return $this->hasMany(Order::class);
+    // }
 }

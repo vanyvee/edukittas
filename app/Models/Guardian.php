@@ -49,13 +49,6 @@ class Guardian extends Model
 
 
 
-// Add to App\Models\Guardian — the other side of Student::guardian()
-
- 
-    public function students(): HasMany--
-    {   
-    return $this->hasMany(Student::class);
-    }
 
     /**
      * Schools this guardian is connected to. There's no guardian_school

@@ -20,6 +20,8 @@ return Application::configure(basePath: dirname(__DIR__))
         'auth.student'  => \App\Http\Middleware\StudentAuthWare::class,
         'auth.user'     => \App\Http\Middleware\UserAuthWare::class,
         'auth.guardian' => \App\Http\Middleware\GuardAuthWare::class,
+        'auth.any' => \App\Http\Middleware\ResolveGuard::class,
+        'role'     => \App\Http\Middleware\EnsureRole::class,
        
     ]);
     })
