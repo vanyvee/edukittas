@@ -2,80 +2,54 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\ValidatesMarkable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use InvalidArgumentException;
 
 class Question extends Model
 {
+    use ValidatesMarkable;
+
     protected $fillable = [
-        'subject_id', 'exam_type', 'type', 'group_id',
-        'text', 'passage', 'options', 'correct_answer',
+        'created_by', 'vetted', 'content_hash',
+        'group_id', 'position',
+        'subject_id', 'class_id', 'topic_id', 'difficulty_level',
+        'text', 'type', 'marks', 'options', 'correct_answers',
     ];
 
     protected $casts = [
-        'options'        => 'array',
-        'correct_answer' => 'array',   // works for both "4" and ["A","D"]
+        'vetted'          => 'boolean',
+        'options'         => 'array',   // null = subjective
+        'correct_answers' => 'array',
     ];
 
-    // Safety net: if anyone ever returns a Question through Eloquent/JSON, the key never leaks.
-    protected $hidden = ['correct_answer'];
+    // Answer key never leaks through JSON. Code can still read it directly.
+    protected $hidden = ['correct_answers'];
 
     protected static function booted(): void
     {
-        // A gap/comprehension child inherits subject + exam from its parent,
-        // so the seeder/admin only has to set them once on the parent.
-        static::creating(function (Question $q) {
-            if ($q->group_id && ($parent = static::find($q->group_id))) {
-                $q->subject_id ??= $parent->subject_id;
-                $q->exam_type  ??= $parent->exam_type;
-            }
-        });
-
-        // Catch data-entry mistakes at write time (a typo in correct_answer = a question nobody can get right).
-        static::saving(fn (Question $q) => $q->assertMarkable());
+        // Runs after the trait's validation hook (trait boots first).
+        static::saving(fn (Question $q) => $q->content_hash = $q->computeContentHash());
     }
 
-    /** Group parents (passage set) have no options; everything else must be markable. */
-    private function assertMarkable(): void
+    public function group(): BelongsTo
     {
-        if ($this->passage !== null) {
-            return;
-        }
-
-        $options = array_map('strval', (array) $this->options);
-        $correct = array_map('strval', (array) $this->correct_answer);
-
-        if (count($options) < 2) {
-            throw new InvalidArgumentException('A question needs at least two options.');
-        }
-        if (count($options) !== count(array_unique($options))) {
-            throw new InvalidArgumentException('Options must be unique (duplicates make marking ambiguous).');
-        }
-        if ($correct === []) {
-            throw new InvalidArgumentException('correct_answer is required.');
-        }
-        foreach ($correct as $answer) {
-            if (! in_array($answer, $options, true)) {
-                throw new InvalidArgumentException("correct_answer \"{$answer}\" is not one of the options.");
-            }
-        }
+        return $this->belongsTo(QuestionGroup::class, 'group_id');
     }
 
-    public function children(): HasMany
+    public function creator(): BelongsTo
     {
-        return $this->hasMany(self::class, 'group_id')->orderBy('id');
+        return $this->belongsTo(Admin::class, 'created_by');
     }
 
-    public function parent(): BelongsTo
-    {
-        return $this->belongsTo(self::class, 'group_id');
-    }
-
-    public function scopeTopLevel(Builder $query): Builder
+    public function scopeStandalone(Builder $query): Builder
     {
         return $query->whereNull('group_id');
+    }
+
+    public function scopeVetted(Builder $query): Builder
+    {
+        return $query->where('vetted', true);
     }
 }
