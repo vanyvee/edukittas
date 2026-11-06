@@ -11,23 +11,19 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
-    '(2)': typeof import('./resources/js/components/MyAccordion (2).vue')['default']
     AccordionHeader: typeof import('./resources/js/components/AccordionHeader.vue')['default']
     AccordionNavBar: typeof import('./resources/js/components/AccordionNavBar.vue')['default']
     AssignTeacher: typeof import('./resources/js/components/AssignTeacher.vue')['default']
-    AuthDashboard: typeof import('./resources/js/components/AuthDashboard.vue')['default']
     AuthDashboardt: typeof import('./resources/js/components/New folder/AuthDashboardt.vue')['default']
     BaseButtton: typeof import('./resources/js/components/BaseButtton.vue')['default']
     Can: typeof import('./resources/js/components/Can.vue')['default']
     Cbt: typeof import('./resources/js/components/Cbt.vue')['default']
     ChatBody: typeof import('./resources/js/components/ChatBody.vue')['default']
     ChatPanel: typeof import('./resources/js/components/ChatPanel.vue')['default']
-    Dashboard: typeof import('./resources/js/components/Dashboard.vue')['default']
     FormField: typeof import('./resources/js/components/FormField.vue')['default']
     Grade: typeof import('./resources/js/components/Grade.vue')['default']
     HomePage: typeof import('./resources/js/components/HomePage.vue')['default']
     LoginForm: typeof import('./resources/js/components/LoginForm.vue')['default']
-    MainCarousel: typeof import('./resources/js/components/MainCarousel.vue')['default']
     MainCarousel2: typeof import('./resources/js/components/MainCarousel2.vue')['default']
     MainView: typeof import('./resources/js/components/MainView.vue')['default']
     MaterialDetail: typeof import('./resources/js/components/MaterialDetail.vue')['default']
@@ -39,8 +35,8 @@ declare module 'vue' {
     PcProfilePanel: typeof import('./resources/js/components/PcProfilePanel.vue')['default']
     ProfileView: typeof import('./resources/js/components/ProfileView.vue')['default']
     ProfileView2: typeof import('./resources/js/components/ProfileView2.vue')['default']
+    Questiondisplaysample: typeof import('./resources/js/components/questiondisplaysample.vue')['default']
     RawMaterial: typeof import('./resources/js/components/RawMaterial.vue')['default']
-    RawMaterials: typeof import('./resources/js/components/RawMaterials.vue')['default']
     RegisterForm: typeof import('./resources/js/components/RegisterForm.vue')['default']
     Rough: typeof import('./resources/js/components/rough.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
@@ -54,6 +50,5 @@ declare module 'vue' {
     StudentListItem: typeof import('./resources/js/components/StudentListItem.vue')['default']
     StudentProfile: typeof import('./resources/js/components/StudentProfile.vue')['default']
     StudentRowList: typeof import('./resources/js/components/StudentRowList.vue')['default']
-    TastyBytiHero: typeof import('./resources/js/components/TastyBytiHero.vue')['default']
   }
 }

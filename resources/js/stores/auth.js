@@ -30,7 +30,7 @@ export const useAuthStore = defineStore('auth', () => {
   // ─── Me — call on app boot ────────────────────────────────────────────
   const me = async () => {
     try {
-      const { data } = await axios.get('/auth/me')
+      const { data } = await axios.get('/me')
       user.value = data.user ?? null
       guard.value = data.guard ?? null
     } catch (_) {
@@ -39,6 +39,9 @@ export const useAuthStore = defineStore('auth', () => {
       checked.value = true  // always flip — success or fail
     }
   }
+
+
+
 
   // ─── Register ─────────────────────────────────────────────────────────
   const register = async (form) => {

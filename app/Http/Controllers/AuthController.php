@@ -25,18 +25,6 @@ class AuthController extends Controller
     }
 
     /**
-     * WHAT IT DOES: Shows the register page.
-     *
-     * USED WHEN: GET /register.
-     *
-     * GIVES BACK: The register view.
-     */
-    public function showRegister()
-    {
-        return view('register');
-    }
-
-    /**
      * WHAT IT DOES: Says who is signed in, on which guard, which school is active and which
      *    schools they can switch to.
      *

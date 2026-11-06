@@ -6,14 +6,31 @@ use App\Http\Controllers\GradeController;
 use App\Http\Controllers\TeacherController;
 use App\Models\Cbt;
 use Illuminate\Support\Facades\Route;
-
+use App\Http\Controllers\LandingController;
 /*
 |--------------------------------------------------------------------------
 | 1. GUEST: no login needed
 |--------------------------------------------------------------------------
 */
+
+Route::get('me', [AuthController::class, 'me']);   // answers "nobody" itself, so it stays outside auth.any
 Route::get('register', [AuthController::class, 'showRegister']);
 Route::post('login', [AuthController::class, 'login']);
+
+
+// MAIN EDUKITTAS DOMAIN
+Route::domain(config('domains.main'))->group(function () {
+    Route::get('/', [LandingController::class, 'home']);
+});
+
+// CODED ENTRY DOMAIN
+Route::domain(config('domains.coded'))->group(function () {
+    Route::get('/{code}', [LandingController::class, 'codedEntry'])
+        ->where('code', '[A-Za-z0-9_-]+');
+});
+
+
+
 
 /*
 |--------------------------------------------------------------------------
@@ -21,7 +38,7 @@ Route::post('login', [AuthController::class, 'login']);
 |    (no `ready` here on purpose: these must work while the picker is showing)
 |--------------------------------------------------------------------------
 */
-Route::get('me', [AuthController::class, 'me']);   // answers "nobody" itself, so it stays outside auth.any
+
 Route::middleware('auth.any')->group(function () {
     Route::post('logout', [AuthController::class, 'logout']);
     Route::post('switch-school', [AuthController::class, 'switchSchool']);
@@ -122,3 +139,4 @@ Route::middleware(['auth.any:web,student,guardian', 'ready'])->group(function ()
         });
     });
 });
+Route::get('/{any}', fn () => view('app'))->where('any', '.*');

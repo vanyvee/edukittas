@@ -47,7 +47,7 @@ class CbtService
     /** How many questions past the requested count a whole group may add. */
     private const OVERSHOOT = 4;
     private const MAX_BLOCKS = 200;
-    private const GROUP_TYPES = ['gap', 'passage', 'diagram', 'audio'];
+    private const GROUP_TYPES = ['gap', 'passage', 'diagram', 'audio', 'video'];
     private const DIFFICULTIES = ['substandard', 'standard', 'advanced'];
     /** Mirrors the frontend's media detection (utils/content.js). */
     private const MEDIA = '/^(data:(image|audio)\/\S+|\S+\.(png|jpe?g|gif|webp|avif|svg|mp3|wav|ogg|m4a|aac)(\?\S*)?)$/i';
@@ -1829,14 +1829,13 @@ public function purgePushedAttempts(int $schoolId, int $classId, int $subjectId)
         $this->assertAdmin($admin);
 
         return DB::transaction(function () use ($tempQuestionIds) {
-            $picked = TempQuestion::with('cbt')->whereIn('id', $tempQuestionIds)->get();
+            $picked = TempQuestion::with('cbt')->whereIn('id', $tempQuestionIds)->lockForUpdate()->get();
             $groupIds = $picked->pluck('group_id')->filter()->unique()->values();
 
             $standalone = $picked->whereNull('group_id')->whereNull('promoted_question_id');
             $groups = $groupIds->isEmpty()
                 ? collect()
-                : TempQuestionGroup::with(['cbt', 'questions'])->whereIn('id', $groupIds)->whereNull('promoted_group_id')->get();
-
+                : TempQuestionGroup::with(['cbt', 'questions'])->whereIn('id', $groupIds)->whereNull('promoted_group_id')->lockForUpdate()->get();
             $counts = ['promoted' => 0, 'vetted_existing' => 0, 'already_in_bank' => 0];
 
             foreach ($standalone as $tq) {

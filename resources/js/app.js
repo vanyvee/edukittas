@@ -17,10 +17,16 @@ if (import.meta.hot) {
 }
 
 const pinia = createPinia()
-
+const landing = window.__LANDING__
 
  const app = createApp(App)
-
+app.provide('landing', landing)
 app.use(router)
 app.use(pinia)
 app.mount('#app')
+
+
+
+
+
+

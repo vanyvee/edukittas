@@ -2,17 +2,14 @@
 
 namespace App\Models;
 
-use App\Models\Concerns\ValidatesMarkable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Question extends Model
 {
-    use ValidatesMarkable;
-
     protected $fillable = [
-        'created_by', 'vetted', 'content_hash',
+        'school_id', 'created_by', 'vetted', 'school_hidden', 'content_hash',
         'group_id', 'position',
         'subject_id', 'class_id', 'topic_id', 'difficulty_level',
         'text', 'type', 'marks', 'options', 'correct_answers',
@@ -20,27 +17,27 @@ class Question extends Model
 
     protected $casts = [
         'vetted'          => 'boolean',
+        'school_hidden'   => 'boolean',
         'options'         => 'array',   // null = subjective
         'correct_answers' => 'array',
     ];
 
-    // Answer key never leaks through JSON. Code can still read it directly.
+    // Answer key stays out of JSON. Code can still read $question->correct_answers.
     protected $hidden = ['correct_answers'];
-
-    protected static function booted(): void
-    {
-        // Runs after the trait's validation hook (trait boots first).
-        static::saving(fn (Question $q) => $q->content_hash = $q->computeContentHash());
-    }
 
     public function group(): BelongsTo
     {
         return $this->belongsTo(QuestionGroup::class, 'group_id');
     }
 
+    public function school(): BelongsTo
+    {
+        return $this->belongsTo(School::class);
+    }
+
     public function creator(): BelongsTo
     {
-        return $this->belongsTo(Admin::class, 'created_by');
+        return $this->belongsTo(User::class, 'created_by');
     }
 
     public function scopeStandalone(Builder $query): Builder

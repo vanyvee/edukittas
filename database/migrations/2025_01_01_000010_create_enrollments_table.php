@@ -36,7 +36,7 @@ return new class extends Migration
  
             $table->timestamps();
  
-            $table->foreign('school_id')->references('id')->on('my_schools');
+            $table->foreign('school_id')->references('id')->on('schools');
             $table->foreign('class_id')->references('id')->on('my_classes');
  
             // Fast lookup for "does this student have history at this school",
