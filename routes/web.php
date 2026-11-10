@@ -26,7 +26,7 @@ Route::domain(config('domains.main'))->group(function () {
 // CODED ENTRY DOMAIN
 Route::domain(config('domains.coded'))->group(function () {
     Route::get('/{code}', [LandingController::class, 'codedEntry'])
-        ->where('code', '[A-Za-z0-9_-]+');
+        ->where('code', '(?!(?:school|admin|affiliate|guest|me|login|logout|register)$)[A-Za-z0-9_-]+');
 });
 
 

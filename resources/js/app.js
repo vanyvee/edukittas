@@ -9,7 +9,7 @@ import App from './App.vue'
 
 const router = createRouter({
     history: createWebHistory(),
-    routes
+    routes //: [...routes, { path: '/', redirect: '/school' }],
 })
 
 if (import.meta.hot) {

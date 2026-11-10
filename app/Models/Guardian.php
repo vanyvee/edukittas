@@ -49,7 +49,6 @@ class Guardian extends Model
 
 
 
-
     /**
      * Schools this guardian is connected to. There's no guardian_school
      * pivot — a guardian belongs to a school only by virtue of having a

@@ -9,13 +9,13 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Builder;
 use App\Support\Helper;
-use App\Traits\BelongsToThisSchool;
+use App\Traits\BelongsToSchool;
 
 class User extends Authenticatable
 {
    
     use  Notifiable;
-    use BelongsToThisSchool;
+    use BelongsToSchool;
 
    
     protected $fillable = [

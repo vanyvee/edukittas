@@ -13,6 +13,8 @@ declare module 'vue' {
   export interface GlobalComponents {
     AccordionHeader: typeof import('./resources/js/components/AccordionHeader.vue')['default']
     AccordionNavBar: typeof import('./resources/js/components/AccordionNavBar.vue')['default']
+    Admin: typeof import('./resources/js/components/admin/index.vue')['default']
+    AdminHome: typeof import('./resources/js/components/admin/AdminHome.vue')['default']
     AssignTeacher: typeof import('./resources/js/components/AssignTeacher.vue')['default']
     AuthDashboardt: typeof import('./resources/js/components/New folder/AuthDashboardt.vue')['default']
     BaseButtton: typeof import('./resources/js/components/BaseButtton.vue')['default']

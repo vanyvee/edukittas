@@ -24,7 +24,7 @@
        <div id="app"></div>
 
        <script>
-          window.__LANDING__ = {{ Illuminate\Support\Js::from($landing) }};
+          window.__LANDING__ = {{ Illuminate\Support\Js::from($landing ?? null) }};
        </script>
 
        
