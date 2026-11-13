@@ -18,18 +18,29 @@ Route::get('register', [AuthController::class, 'showRegister']);
 Route::post('login', [AuthController::class, 'login']);
 
 
+// // MAIN EDUKITTAS DOMAIN
+// Route::domain(config('domains.main'))->group(function () {
+//     Route::get('/', [LandingController::class, 'home']);
+// });
+
+// // CODED ENTRY DOMAIN
+// Route::domain(config('domains.coded'))->group(function () {
+//     Route::get('/{code}', [LandingController::class, 'codedEntry'])
+//         ->where('code', '(?!(?:school|admin|affiliate|guest|me|login|logout|register)$)[A-Za-z0-9_-]+');
+// });
+
 // MAIN EDUKITTAS DOMAIN
 Route::domain(config('domains.main'))->group(function () {
     Route::get('/', [LandingController::class, 'home']);
 });
 
-// CODED ENTRY DOMAIN
-Route::domain(config('domains.coded'))->group(function () {
-    Route::get('/{code}', [LandingController::class, 'codedEntry'])
-        ->where('code', '(?!(?:school|admin|affiliate|guest|me|login|logout|register)$)[A-Za-z0-9_-]+');
-});
-
-
+// SHORT-CODE DOMAIN: only registered when it is configured
+if ($coded = config('domains.coded')) {
+    Route::domain($coded)->group(function () {
+        Route::get('/{code}', [LandingController::class, 'codedEntry'])
+            ->where('code', '(?!(?:school|admin|affiliate|guest|me|login|logout|register)$)[A-Za-z0-9_-]+');
+    });
+}
 
 
 /*
@@ -40,9 +51,13 @@ Route::domain(config('domains.coded'))->group(function () {
 */
 
 Route::middleware('auth.any')->group(function () {
+
+
+
     Route::post('logout', [AuthController::class, 'logout']);
     Route::post('switch-school', [AuthController::class, 'switchSchool']);
-    // Route::post('switch-ward', [AuthController::class, 'switchWard']);   // guardians; add when the method exists
+    Route::post('switch-ward', [AuthController::class, 'switchWard'])->middleware('auth.any:guardian');
+
 });
 
 /*

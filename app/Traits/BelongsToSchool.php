@@ -4,7 +4,7 @@
 
 namespace App\Traits;
 
-use App\Support\Helper;
+use App\Supports\Helper;
 use Illuminate\Database\Eloquent\Builder;
 
 trait BelongsToSchool

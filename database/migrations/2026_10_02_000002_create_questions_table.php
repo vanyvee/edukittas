@@ -11,24 +11,25 @@ return new class extends Migration
         Schema::create('questions', function (Blueprint $table) {
             $table->id();
 
-            // Tenancy / ownership
-            $table->foreignId('created_by')->nullable()->constrained('admins')->nullOnDelete();
-
+              $table->unsignedSmallInteger('created_by');
+              $table->unsignedMediumInteger('subject_id');
+              $table->unsignedMediumInteger('class_id');
+              $table->unsignedBigInteger('topic_id');
             // Grouping. NULL group = standalone question.
             $table->foreignId('group_id')->nullable()->constrained('question_groups')->cascadeOnDelete();
             // Position inside the group. For gap groups this is the gap index
             // and matches the {{n}} token in the group's content.
             $table->unsignedSmallInteger('position')->nullable();
-            $table->foreignId('school_id')->nullable()->constrained('schools')->nullOnDelete();
             $table->boolean('vetted')->default(false);
             $table->string('content_hash', 64)->index(); // hash of normalized text + sorted options
 
-            // Classification (verify these table names match yours)
-            $table->foreignId('subject_id')->constrained('subjects')->cascadeOnDelete();
-            $table->foreignId('class_id')->constrained('my_classes')->cascadeOnDelete();
-            $table->foreignId('topic_id')->constrained('subject_topics')->cascadeOnDelete();
-            $table->enum('difficulty_level', ['substandard', 'standard', 'advanced'])->default('standard');
-
+           $table->enum('difficulty_level', ['substandard', 'standard', 'advanced'])->default('standard');
+            $table->foreign('created_by')->references('id')->on('admins');
+              $table->foreign('subject_id')->references('id')->on('subjects');
+            $table->foreign('class_id')->references('id')->on('my_classes');
+            $table->foreign('topic_id')->references('id')->on('subject_topics');
+          
+          
             // Content
             $table->text('text');
             $table->enum('type', ['objective', 'subjective']);

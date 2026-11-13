@@ -22,6 +22,33 @@ class Helper
         return session('school_id') ?? throw new \RuntimeException('No active school in session.');
     }
 
+    public static function setWardId(int $id): void
+{
+    session(['ward_id' => $id]);
+}
+ public static function setSchoolId(int $id): void
+{
+    session(['school_id' => $id]);
+}
+public static function currentWardId(): ?int
+{
+    $id = session('ward_id');
+
+    return $id === null ? null : (int) $id;
+}
+public static function currentSchoolId(): ?int
+{
+    $id = session('school_id');
+
+    return $id === null ? null : (int) $id;
+}
+
+/** Forgets the active school and ward, so a new login starts clean. */
+public static function clearContext(): void
+{
+    session()->forget(['school_id', 'ward_id']);
+}
+
 
 
     public static function sameSet(array $a, array $b): bool

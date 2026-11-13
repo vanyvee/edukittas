@@ -12,7 +12,7 @@ return new class extends Migration
             $table->id();
 
             // Tenant: every CBT belongs to a school.
-            $table->foreignId('school_id')->constrained('schools')->cascadeOnDelete();
+                 $table->unsignedMediumInteger('school_id');
 
             // Who set it up: an Enrollment (student) or a User (teacher/staff).
             $table->morphs('host');
@@ -26,7 +26,7 @@ return new class extends Migration
             $table->unsignedSmallInteger('duration_minutes')->nullable(); // personal timer
             $table->dateTime('opens_at')->nullable();
             $table->dateTime('closes_at')->nullable();                    // hard stop for everyone
-
+           $table->foreign('school_id')->references('id')->on('schools');
             // A scheduled command deletes expired CBTs; cascades remove their temp questions.
             $table->dateTime('expires_at')->nullable()->index();
 

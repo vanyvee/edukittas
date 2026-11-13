@@ -10,8 +10,9 @@ return new class extends Migration
     {
         Schema::create('subject_topics', function (Blueprint $table) {
             $table->id();
-           $table->foreignId('subject_id')->constrained('subjects')->cascadeOnDelete();
+           $table->unsignedMediumInteger('subject_id');
             $table->text('title');
+            $table->foreign('subject_id')->references('id')->on('subjects');
           
         });
     }

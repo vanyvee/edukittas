@@ -7,8 +7,9 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Foundation\Auth\User as Authenticatable;
 
-class Guardian extends Model
+class Guardian extends Authenticatable
 {
     use HasUuids;
     use Notifiable;
@@ -42,7 +43,7 @@ class Guardian extends Model
     }
 
     /** Wards — the guardian's own students. */
-    public function students(): HasMany
+    public function wards(): HasMany
     {
         return $this->hasMany(Student::class, 'guardian_id');
     }

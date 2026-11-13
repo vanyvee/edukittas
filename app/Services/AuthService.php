@@ -7,7 +7,7 @@ use App\Models\Enrollment;
 use App\Models\Guardian;
 use App\Models\Student;
 use App\Models\User;
-use App\Support\Helper;
+use App\Supports\Helper;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
@@ -42,7 +42,7 @@ class AuthService extends Service
     private const PREFIXES = [
         '@' => ['name' => 'web', 'model' => User::class],
         '%' => ['name' => 'guardian', 'model' => Guardian::class],
-        '&' => ['name' => 'admin', 'model' => Admin::class],
+        '$' => ['name' => 'admin', 'model' => Admin::class],
     ];
 
     private const DEFAULT = ['name' => 'student', 'model' => Student::class];
@@ -100,19 +100,24 @@ class AuthService extends Service
         if ($name === 'guardian' && $wards->isEmpty()) {
             throw ValidationException::withMessages(['username' => ['No ward is linked to this account.']]);
         }
+        if ($name === 'guardian' && ! $wards->contains(fn ($w) => $w['school'])) {
+         throw ValidationException::withMessages(['username' => ['None of your children is currently enrolled in a school.']]);
+}
 
         RateLimiter::clear($key);
 
         $this->logoutAll();
         Helper::clearContext();
 
-        if ($schools->isNotEmpty() && ($name === 'student' || $schools->count() === 1)) {
+       // Land straight in the app: staff in their first school, a guardian with their first enrolled child.
+        if ($schools->isNotEmpty()) {
             Helper::setSchoolId((int) $schools->first()['id']);
         }
 
-        if ($wards->count() === 1 && $wards->first()['school']) {
-            Helper::setWardId((int) $wards->first()['ward']->getKey());
-            Helper::setSchoolId($wards->first()['school']['id']);
+        if ($name === 'guardian') {
+            $first = $wards->first(fn ($w) => $w['school']);
+            Helper::setWardId((int) $first['ward']->getKey());
+            Helper::setSchoolId($first['school']['id']);
         }
 
         Auth::guard($name)->login($account);
@@ -254,14 +259,28 @@ class AuthService extends Service
             throw new \DomainException('That ward has no active enrollment.');
         }
 
+       
         Helper::setWardId($wardId);
-        Helper::setSchoolId($entry['school']['id']);
+
+        // Same school: nothing else moves. Different school: the session moves with the child.
+        if ((int) $entry['school']['id'] !== Helper::currentSchoolId()) {
+            Helper::setSchoolId($entry['school']['id']);
+        }
+       
     }
 
+
+    
     // ------------------------------------------------------------------
     // Where people belong
     // ------------------------------------------------------------------
-
+private function schoolSummary(object $s): array
+{
+    return [
+        'id' => (int) $s->id, 'name' => $s->name, 'logo' => $s->logo,
+        'theme' => $s->theme, 'session' => $s->current_session, 'term' => $s->current_term,
+    ];
+}
     /**
      * WHAT IT DOES: Lists the schools a staff member or student belongs to. Staff come from the
      *    department_users table; a student comes from their active enrollment. Read with plain
@@ -279,9 +298,12 @@ class AuthService extends Service
             default => collect(),
         };
 
-        return DB::table('schools')->whereIn('id', $ids->unique()->values())->orderBy('name')->get(['id', 'name'])
-            ->map(fn ($s) => ['id' => (int) $s->id, 'name' => $s->name]);
+        return DB::table('schools')->whereIn('id', $ids->unique()->values())->orderBy('name')
+        ->get(['id', 'name', 'logo', 'theme', 'current_session', 'current_term'])
+        ->map(fn ($s) => $this->schoolSummary($s));
     }
+
+   
 
     /**
      * WHAT IT DOES: Lists a guardian's wards, each with the school of their active enrollment
@@ -295,15 +317,20 @@ class AuthService extends Service
     {
         $wards = $guardian->wards()->get();
         $schoolOf = $this->activeSchoolByStudent($wards->pluck('id')->all());
-        $names = DB::table('schools')->whereIn('id', array_values($schoolOf))->pluck('name', 'id');
-
-        return $wards->map(fn ($ward) => [
-            'ward' => $ward,
-            'school' => isset($schoolOf[$ward->id])
-                ? ['id' => (int) $schoolOf[$ward->id], 'name' => $names[$schoolOf[$ward->id]] ?? null]
-                : null,
+        //$names = DB::table('schools')->whereIn('id', array_values($schoolOf))->pluck('name', 'id');
+        $schools = DB::table('schools')->whereIn('id', array_values($schoolOf))
+          ->get(['id', 'name', 'logo', 'theme', 'current_session', 'current_term'])->keyBy('id');
+       
+         return $wards->map(fn ($ward) => [
+        'ward' => $ward,
+         'school' => isset($schoolOf[$ward->id]) && $schools->has($schoolOf[$ward->id])
+        ? $this->schoolSummary($schools[$schoolOf[$ward->id]]) : null,
         ]);
     }
+
+
+   
+
 
     /**
      * WHAT IT DOES: For each given student, the school of their active enrollment. Enrollment is read

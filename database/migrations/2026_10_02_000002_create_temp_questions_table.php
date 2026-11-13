@@ -15,6 +15,7 @@ return new class extends Migration
             $table->foreignId('cbt_id')->constrained('cbts')->cascadeOnDelete();
 
             // Set when copied from the main bank (snapshot, not a live link)
+            
             $table->foreignId('source_question_id')->nullable()->constrained('questions')->nullOnDelete();
             $table->foreignId('promoted_question_id')->nullable()->constrained('questions')->nullOnDelete();
             $table->foreignId('group_id')->nullable()->constrained('temp_question_groups')->cascadeOnDelete();
@@ -22,9 +23,10 @@ return new class extends Migration
             $table->unsignedMediumInteger('question_number')->nullable(); // order within this CBT only
 
             // Classification
-            $table->foreignId('subject_id')->constrained('subjects')->cascadeOnDelete();
-            $table->foreignId('class_id')->constrained('my_classes')->cascadeOnDelete();
-            $table->foreignId('topic_id')->constrained('subject_topics')->cascadeOnDelete();
+             $table->unsignedMediumInteger('subject_id');
+              $table->unsignedMediumInteger('class_id');
+              $table->unsignedBigInteger('topic_id');
+            
             $table->enum('difficulty_level', ['substandard', 'standard', 'advanced'])->default('standard');
 
             // Content (same rules as the main bank)
@@ -33,7 +35,10 @@ return new class extends Migration
             $table->unsignedTinyInteger('marks')->default(1);
             $table->json('options')->nullable();
             $table->json('correct_answers');
-
+            $table->foreign('class_id')->references('id')->on('my_classes');
+            $table->foreign('topic_id')->references('id')->on('subject_topics');
+             $table->foreign('subject_id')->references('id')->on('subjects');
+          
             $table->timestamps();
 
             $table->index(['cbt_id', 'question_number']);

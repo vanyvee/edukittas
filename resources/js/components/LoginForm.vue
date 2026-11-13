@@ -7,7 +7,7 @@ import FormField              from '@/components/FormField.vue'
 const formStore = useFormStore()
 const auth      = useAuthStore()
 const router    = useRouter()
-const switchTo = inject('switchTo')
+//const switchTo = inject('switchTo')
 // Build form with only the fields we need
 const { handleSubmit, setErrors } = formStore.buildForm([
   'username',
@@ -16,9 +16,9 @@ const { handleSubmit, setErrors } = formStore.buildForm([
 
 const onSubmit = handleSubmit(async (values) => {
   const result = await auth.login(values.username, values.password)
-console.log(values)
-  if (result.success) {
-     switchTo('Home')
+  if (!result.success) {
+    // on success App.vue moves the person to their own world
+  formStore.applyServerErrors({ setErrors }, result.error)
   } else {
     // Apply server errors back into the form
     formStore.applyServerErrors({ setErrors }, result.error)

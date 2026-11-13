@@ -6,7 +6,7 @@ use App\Support\Helper;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Builder;
- 
+
 /**
  * One row per school a student has ever attended. This is where
  * school_id, class_id, arm, and status live now — they moved here from

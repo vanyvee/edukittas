@@ -12,7 +12,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('submission_id')->constrained('submissions')->cascadeOnDelete();
             $table->foreignId('question_id')->constrained('questions')->cascadeOnDelete();
-            $table->foreignId('selected_option_id')->nullable()->constrained('options')->nullOnDelete();
+             $table->string('selected',255);
             $table->text('answer_text')->nullable(); // theory questions
             $table->unsignedTinyInteger('marks_awarded')->nullable();
             $table->timestamps();

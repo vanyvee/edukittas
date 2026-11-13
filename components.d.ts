@@ -22,6 +22,7 @@ declare module 'vue' {
     Cbt: typeof import('./resources/js/components/Cbt.vue')['default']
     ChatBody: typeof import('./resources/js/components/ChatBody.vue')['default']
     ChatPanel: typeof import('./resources/js/components/ChatPanel.vue')['default']
+    ContextSwitcher: typeof import('./resources/js/components/ContextSwitcher.vue')['default']
     FormField: typeof import('./resources/js/components/FormField.vue')['default']
     Grade: typeof import('./resources/js/components/Grade.vue')['default']
     HomePage: typeof import('./resources/js/components/HomePage.vue')['default']

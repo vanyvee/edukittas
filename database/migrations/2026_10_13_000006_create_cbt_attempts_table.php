@@ -19,10 +19,10 @@ return new class extends Migration
             $table->morphs('taker');
 
 
-$table->string('cbt_title')->nullable()->after('cbt_id');
+$table->string('cbt_title')->nullable();
         $table->unsignedMediumInteger('subject_id')->nullable(); // no FK on purpose
         $table->dateTime('pushed_at')->nullable();
-        $table->index(['subject_id', 'submitted_at']);
+       
         $table->dateTime('started_at');
             $table->dateTime('ends_at')->nullable();       // computed once at start
             $table->dateTime('submitted_at')->nullable();
@@ -31,7 +31,7 @@ $table->string('cbt_title')->nullable()->after('cbt_id');
             $table->unsignedSmallInteger('total')->nullable();
 
             $table->timestamps();
-
+            $table->index(['subject_id', 'submitted_at']);
             // No retakes: one attempt per taker per CBT.
             $table->unique(['cbt_id', 'taker_type', 'taker_id']);
         });

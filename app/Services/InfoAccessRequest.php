@@ -6,7 +6,7 @@ use App\Models\AccessRequest;
 use App\Models\Enrollment;
 use App\Models\Remark;
 use App\Models\Student;
-use App\Support\Helper;
+use App\Supports\Helper;
 
 /**
  * Both monetized lookups (trace + remarks) go through this one table/

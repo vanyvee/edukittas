@@ -8,8 +8,8 @@ use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Foundation\Auth\User as Authenticatable;
-use App\Support\Helper;
-use App\Traits\BelongsToThisSchool;
+use App\Supports\Helper;
+  use Illuminate\Database\Eloquent\Relations\HasMany;
 
 
 class Student extends Authenticatable
@@ -17,7 +17,7 @@ class Student extends Authenticatable
    
     use HasUuids;
     use Notifiable;
-    use BelongsToThisSchool;
+ 
 
 // protected static function booted(): void
 // {
@@ -101,6 +101,15 @@ class Student extends Authenticatable
     {
         return $this->enrollments()->where('status', '1');
     }
+
+      /**
+   * The student's active enrollment in the school that is active in the session. Enrollment's own
+   * school and status scopes do the filtering, so this needs a school in the session.
+   */
+  public function currentEnrollment(): ?Enrollment
+  {
+      return $this->enrollments()->latest('id')->first();
+  }
 
     
 }

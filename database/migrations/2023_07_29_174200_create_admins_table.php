@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('admins', function (Blueprint $table) {
             $table->engine = "InnoDB";
             
-            $table->tinyIncrements('id');
+          $table->smallIncrements('id');
               $table->string('username',20)->unique();
             $table->string('email',30)->unique();
             $table->string('password',60);

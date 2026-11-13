@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('schools', function (Blueprint $table) {
             $table->engine = "InnoDB";
-            $table->mediumIncrements('id');
+            $table->mediumIncrements('id'); 
             $table->string('name',100);
             $table->unsignedSmallInteger('lg_id');
             $table->date('dob');

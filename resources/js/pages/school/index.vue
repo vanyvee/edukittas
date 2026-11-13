@@ -90,7 +90,7 @@ const navItems = computed(() => {
 const handleAction = async (key) => {
   if (key === 'Logout') {
     await auth.logout()
-    switchTo('Home')   // you already have this helper defined above
+    
   }
 }
 </script>

@@ -4,20 +4,31 @@
    <RouterView />
    </div> 
 </template>
+
 <script setup>
 import { useThemeStore } from '@/stores/theme'
 import { useAuthStore }  from '@/stores/auth'
-import { onMounted, ref } from 'vue'
+import { onMounted, ref, watch } from 'vue'
+import { useRouter, useRoute } from 'vue-router'
+//import ContextPicker from '@/components/ContextPicker.vue'
 
 const theme   = useThemeStore()
 const auth    = useAuthStore()
+const router  = useRouter()
+const route   = useRoute()
 const mounted = ref(false)
 
 onMounted(async () => {
   theme.init()
-  await auth.me()
+  await router.isReady()   // the guard in app.js already loads auth.me()
   mounted.value = true
 })
+
+// Logging in or out re-runs the guard, which moves the person to their own world.
+watch(() => [auth.isLoggedIn, auth.guard], () => {
+  if (mounted.value) router.replace({ path: route.path, query: route.query, force: true })
+})
+
 </script>
 
 

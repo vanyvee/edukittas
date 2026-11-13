@@ -6,7 +6,7 @@ use App\Models\Student;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use App\Models\User;
-use App\Support\Helper;
+use App\Supports\Helper;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Validation\Rule;
  use App\Services\Cbt\CbtService;

@@ -3,7 +3,7 @@
 namespace App\Services\Cbt;
 
 use App\Exceptions\CbtException;
-use App\Helpers\Helper;   // your existing static helper class: change this line if it lives elsewhere
+use App\Supports\Helper;   // your existing static helper class: change this line if it lives elsewhere
 use App\Models\Cbt;
 use App\Models\CbtAttempt;
 use App\Models\CbtAttemptAnswer;
