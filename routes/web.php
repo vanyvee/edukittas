@@ -7,6 +7,7 @@ use App\Http\Controllers\TeacherController;
 use App\Models\Cbt;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LandingController;
+use App\Http\Controllers\PublicController;
 /*
 |--------------------------------------------------------------------------
 | 1. GUEST: no login needed
@@ -16,6 +17,21 @@ use App\Http\Controllers\LandingController;
 Route::get('me', [AuthController::class, 'me']);   // answers "nobody" itself, so it stays outside auth.any
 Route::get('register', [AuthController::class, 'showRegister']);
 Route::post('login', [AuthController::class, 'login']);
+
+
+
+
+
+
+Route::prefix('public')->group(function () {
+    Route::get('schools/featured', [PublicController::class, 'featured'])->middleware('throttle:60,1');
+    Route::get('schools/by-code/{code}', [PublicController::class, 'schoolByCode'])->middleware('throttle:60,1');
+    Route::get('schools/{id}', [PublicController::class, 'school'])->whereNumber('id')->middleware('throttle:60,1');
+    Route::post('schools/{id}/enquiries', [PublicController::class, 'enquire'])->whereNumber('id')->middleware('throttle:5,10');
+    Route::post('affiliates', [PublicController::class, 'applyAffiliate'])->middleware('throttle:5,10');
+    Route::get('demo', [PublicController::class, 'demo'])->middleware('throttle:60,1');
+});
+
 
 
 // // MAIN EDUKITTAS DOMAIN
@@ -74,7 +90,7 @@ Route::middleware('auth.any:admin')->prefix('admin')->group(function () {
 | 4. SCHOOL WORLD: staff, students and guardians, with a school active
 |--------------------------------------------------------------------------
 */
-Route::middleware(['auth.any:web,student,guardian', 'ready'])->group(function () {
+Route::middleware(['auth.any:web,student,guardian', 'ready','demo.readonly'])->group(function () {
 
     // Shared by all three: home, school info, anything every logged-in person may see.
     // Route::get('home', ...);
@@ -115,7 +131,7 @@ Route::middleware(['auth.any:web,student,guardian', 'ready'])->group(function ()
         Route::get('teachers/{teacher}/assignments', [TeacherController::class, 'assignments'])->whereNumber('teacher');
 
         // question bank (the service decides who may edit or remove what)
-        Route::post('cbt-bank/request', [CbtController::class, 'requestQuestions']);
+        Route::post('cbt-bank/request', [CbtController::class, 'requestQuestions'])->withoutMiddleware('demo.readonly');
         Route::put('cbt-bank/questions/{question}', [CbtController::class, 'updateQuestion']);
         Route::delete('cbt-bank/questions/{question}', [CbtController::class, 'removeQuestion']);
         Route::delete('cbt-bank/groups/{group}', [CbtController::class, 'removeGroup']);
@@ -126,7 +142,7 @@ Route::middleware(['auth.any:web,student,guardian', 'ready'])->group(function ()
             Route::post('grades/scores', [GradeController::class, 'record']);
             Route::get('grades/students/{student}', [GradeController::class, 'forStudent'])->whereNumber('student');
             Route::get('grades/pushable', [GradeController::class, 'pushable']);
-            Route::post('grades/push/preview', [GradeController::class, 'previewPush']);
+            Route::post('grades/push/preview', [GradeController::class, 'previewPush'])->withoutMiddleware('demo.readonly');
             Route::post('grades/push', [GradeController::class, 'push']);
         });
 
@@ -141,7 +157,7 @@ Route::middleware(['auth.any:web,student,guardian', 'ready'])->group(function ()
             Route::put('teachers/{teacher}', [TeacherController::class, 'update'])->whereNumber('teacher');
             Route::delete('teachers/{teacher}', [TeacherController::class, 'destroy'])->whereNumber('teacher');
             Route::post('teachers/{teacher}/assignments', [TeacherController::class, 'assign'])->whereNumber('teacher');
-            Route::post('teachers/{teacher}/assignments/check', [TeacherController::class, 'check'])->whereNumber('teacher');
+            Route::post('teachers/{teacher}/assignments/check', [TeacherController::class, 'check'])->whereNumber('teacher')->withoutMiddleware('demo.readonly');
             Route::post('teachers/{teacher}/assignments/deassign', [TeacherController::class, 'deassign'])->whereNumber('teacher');
         });
 

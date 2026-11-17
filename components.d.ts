@@ -11,11 +11,14 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
+    AboutEdukittas: typeof import('./resources/js/components/guest/AboutEdukittas.vue')['default']
     AccordionHeader: typeof import('./resources/js/components/AccordionHeader.vue')['default']
     AccordionNavBar: typeof import('./resources/js/components/AccordionNavBar.vue')['default']
     Admin: typeof import('./resources/js/components/admin/index.vue')['default']
     AdminHome: typeof import('./resources/js/components/admin/AdminHome.vue')['default']
+    AffiliateInfo: typeof import('./resources/js/components/affiliate/AffiliateInfo.vue')['default']
     AssignTeacher: typeof import('./resources/js/components/AssignTeacher.vue')['default']
+    AtAGlance: typeof import('./resources/js/components/guest/AtAGlance.vue')['default']
     AuthDashboardt: typeof import('./resources/js/components/New folder/AuthDashboardt.vue')['default']
     BaseButtton: typeof import('./resources/js/components/BaseButtton.vue')['default']
     Can: typeof import('./resources/js/components/Can.vue')['default']
@@ -23,8 +26,12 @@ declare module 'vue' {
     ChatBody: typeof import('./resources/js/components/ChatBody.vue')['default']
     ChatPanel: typeof import('./resources/js/components/ChatPanel.vue')['default']
     ContextSwitcher: typeof import('./resources/js/components/ContextSwitcher.vue')['default']
+    DemoLogin: typeof import('./resources/js/components/DemoLogin.vue')['default']
     FormField: typeof import('./resources/js/components/FormField.vue')['default']
+    GatewayIntro: typeof import('./resources/js/components/guest/GatewayIntro.vue')['default']
     Grade: typeof import('./resources/js/components/Grade.vue')['default']
+    GuestHero: typeof import('./resources/js/components/guest/GuestHero.vue')['default']
+    GuestTopBar: typeof import('./resources/js/components/guest/GuestTopBar.vue')['default']
     HomePage: typeof import('./resources/js/components/HomePage.vue')['default']
     LoginForm: typeof import('./resources/js/components/LoginForm.vue')['default']
     MainCarousel2: typeof import('./resources/js/components/MainCarousel2.vue')['default']

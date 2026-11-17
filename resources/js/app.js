@@ -25,6 +25,8 @@ const worldOfPath = (path) =>
 router.beforeEach(async (to) => {
     const auth = useAuthStore(pinia)
     if (!auth.checked) await auth.me()
+    // A school's own page is open to guests
+    if (auth.isGuest && to.matched.some((r) => r.path === '/:code')) return
 
     if (worldOfPath(to.path) !== auth.world) return HOME[auth.world]
 })
@@ -33,10 +35,6 @@ if (import.meta.hot) {
     handleHotUpdate(router)
 }
 
-
-// if (import.meta.hot) {
-//     handleHotUpdate(router)
-// }
 
 const landing = window.__LANDING__
 

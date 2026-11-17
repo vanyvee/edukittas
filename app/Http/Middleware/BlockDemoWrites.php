@@ -34,7 +34,7 @@ class BlockDemoWrites
 
 public function handle(Request $request, Closure $next): Response
 {
-    $demoId = config('demo.school_id');
+    $demoId = config('demoSchool.school_id');
 
     if ($demoId !== null && ! $request->isMethodSafe() && (int) Helper::currentSchoolId() === (int) $demoId) {
         return response()->json([

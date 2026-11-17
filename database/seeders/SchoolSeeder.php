@@ -72,8 +72,14 @@ class SchoolSeeder extends Seeder
                 'promotion_grade' => 45,
                 'result_template' => 'a',
                 'theme' => 'a',
+                 'url_code' => 'demo',
+            'featured' => true,
+            'motto' => 'Learning made simple',
+            'about' => "Edukittas Demo College is a sample school you can explore.\n\nIt shows how classes, teachers, tests, scores and results work together in one place.",
+           
                 'created_at' => $now,
                 'updated_at' => $now,
+
             ]);
 
             // ------------------------------------------------------------

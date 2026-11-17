@@ -14,8 +14,8 @@
         v-for="(slide, idx) in props.slides"
         :key="`ind-${idx}`"
         :class="[
-          'bg-transparent border-none cursor-pointer text-lime-400 rounded-md text-sm transition-all duration-150 px-2 py-1',
-          { 'bg-blue-500/12 text-teal-800 font-semibold': idx === activeIndex }
+          'bg-transparent border-none cursor-pointer text-neutral-700 rounded-md text-sm transition-all duration-150 px-2 py-1',
+          { 'bg-primary-500/12 text-primary-900 font-semibold': idx === activeIndex }
         ]"
         @click="goToSlide(idx, 'click')"
         :aria-label="`Go to slide ${idx + 1}`"
