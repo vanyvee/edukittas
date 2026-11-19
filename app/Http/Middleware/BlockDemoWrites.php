@@ -34,16 +34,17 @@ class BlockDemoWrites
 
 public function handle(Request $request, Closure $next): Response
 {
-    $demoId = config('demoSchool.school_id');
+   
+    $demoIds = config('demoSchool.school_ids', []);
 
-    if ($demoId !== null && ! $request->isMethodSafe() && (int) Helper::currentSchoolId() === (int) $demoId) {
-        return response()->json([
-            'message' => 'This is a demo school. Changes are disabled.',
-            'demo' => true,
-        ], 403);
-    }
+if ($demoIds && ! $request->isMethodSafe() && in_array((int) Helper::currentSchoolId(), $demoIds, true)) {
+    return response()->json([
+        'message' => 'This is a demo school. Changes are disabled.',
+        'demo' => true,
+    ], 403);
+}
 
-    return $next($request);
+return $next($request);
 }
 
 

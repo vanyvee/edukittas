@@ -6,6 +6,7 @@ import { useGuestStore } from '@/stores/guest'
 
 const guest = useGuestStore()
 const switchTo = inject('switchTo')
+const goToName = inject('goToSlideByName', null)
 
 const open = ref(false)
 const picker = ref(null)
@@ -14,12 +15,13 @@ onClickOutside(picker, () => (open.value = false))
 const pick = (school) => {
   guest.selectSchool(school.id)
   open.value = false
+  goToName?.('At a glance')   // show the visitor the school they just picked
 }
 </script>
 
 <template>
   <header
-    class="absolute top-0 inset-x-0 z-20 h-14 flex items-center justify-between gap-3 pl-3 pr-3
+    class="relative z-30 shrink-0 h-14 flex items-center justify-between gap-3 pl-3 pr-3
            bg-surface-300 border-b border-neutral-300"
   >
     <!-- Featured schools picker -->

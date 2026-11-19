@@ -197,16 +197,15 @@ class PublicSchoolService extends Service
             : Storage::disk('public')->url($path);
     }
 
-
-    public function demo(): ?array
+public function demo(): ?array
 {
-    $id = config('demoSchool.school_id');
-    if (! $id) {
+    $ids = config('demoSchool.school_ids', []);
+    if (! $ids) {
         return null;
     }
 
     return [
-        'school' => DB::table('schools')->where('id', $id)->value('name'),
+        'schools' => DB::table('schools')->whereIn('id', $ids)->orderBy('id')->pluck('name')->all(),
         'accounts' => array_map(
             fn ($a) => $a + ['password' => config('demoSchool.password')],
             config('demoSchool.accounts', []),
