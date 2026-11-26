@@ -11,6 +11,7 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
+    '[uuid]': typeof import('./resources/js/components/school/[uuid].vue')['default']
     AboutEdukittas: typeof import('./resources/js/components/guest/AboutEdukittas.vue')['default']
     AccordionDefaultHeader: typeof import('./resources/js/components/AccordionDefaultHeader.vue')['default']
     AccordionHeader: typeof import('./resources/js/components/AccordionHeader.vue')['default']
@@ -38,6 +39,7 @@ declare module 'vue' {
     GuestHero: typeof import('./resources/js/components/guest/GuestHero.vue')['default']
     GuestTopBar: typeof import('./resources/js/components/guest/GuestTopBar.vue')['default']
     HomePage: typeof import('./resources/js/components/HomePage.vue')['default']
+    LgaPicker: typeof import('./resources/js/components/LgaPicker.vue')['default']
     LoginForm: typeof import('./resources/js/components/LoginForm.vue')['default']
     MainCarousel2: typeof import('./resources/js/components/MainCarousel2.vue')['default']
     MainView: typeof import('./resources/js/components/MainView.vue')['default']
@@ -52,15 +54,18 @@ declare module 'vue' {
     ProfileView2: typeof import('./resources/js/components/ProfileView2.vue')['default']
     Questiondisplaysample: typeof import('./resources/js/components/questiondisplaysample.vue')['default']
     RawMaterial: typeof import('./resources/js/components/RawMaterial.vue')['default']
+    RegField: typeof import('./resources/js/components/RegField.vue')['default']
     RegisterForm: typeof import('./resources/js/components/RegisterForm.vue')['default']
     Rough: typeof import('./resources/js/components/rough.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
+    SchoolRegisterForm: typeof import('./resources/js/components/SchoolRegisterForm.vue')['default']
     SettingsPanel: typeof import('./resources/js/components/SettingsPanel.vue')['default']
     SettingsView: typeof import('./resources/js/components/SettingsView.vue')['default']
     SmallCarousel: typeof import('./resources/js/components/SmallCarousel.vue')['default']
     SoftUnmount: typeof import('./resources/js/components/SoftUnmount.vue')['default']
     Staff: typeof import('./resources/js/components/school/Staff.vue')['default']
+    StaffRegisterForm: typeof import('./resources/js/components/school/StaffRegisterForm.vue')['default']
     Student: typeof import('./resources/js/components/Student.vue')['default']
     Student2: typeof import('./resources/js/components/Student2.vue')['default']
     StudentDetails: typeof import('./resources/js/components/StudentDetails.vue')['default']
@@ -68,5 +73,6 @@ declare module 'vue' {
     StudentProfile: typeof import('./resources/js/components/school/StudentProfile.vue')['default']
     StudentRowList: typeof import('./resources/js/components/StudentRowList.vue')['default']
     ThemePicker: typeof import('./resources/js/components/ThemePicker.vue')['default']
+    UserRegisterForm: typeof import('./resources/js/components/school/UserRegisterForm.vue')['default']
   }
 }

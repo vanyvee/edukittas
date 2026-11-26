@@ -2,6 +2,8 @@
  
 namespace App\Supports;
  
+use App\Events\RecordsUpserted;
+use InvalidArgumentException;
 /**
  * A plain, dependency-free helper for the "is there an active school in
  * session" check. Deliberately NOT a Service subclass — both the model
@@ -74,6 +76,38 @@ public static function hashOf(mixed $value): string
 {
     return hash('sha256', json_encode($value, JSON_UNESCAPED_UNICODE));
 }
+
+
+
+
+    /**
+     * WHAT IT DOES: Inserts new rows and updates existing ones in one query (Laravel upsert). One row or many.
+     *    $uniqueBy must be backed by a unique or primary index. $strictOne = exactly one row or it throws.
+     *    $notify fires App\\Events\\RecordsUpserted (upsert fires no model events). $update = columns to overwrite
+     *    on a match (null = all). No casts, mutators, $fillable or scopes apply, so use it for plain data.
+     *
+     * GIVES BACK: Rows affected as the database counts them (not insert-vs-update).
+     */
+    public static function upsert(
+        string $model,
+        array $rows,
+        array|string $uniqueBy,
+        bool $notify = false,
+        bool $strictOne = false,
+        ?array $update = null,
+    ): int {
+        $rows = array_is_list($rows) ? $rows : [$rows];            // one row or many
+
+        throw_if($strictOne && count($rows) !== 1, InvalidArgumentException::class, 'Expected exactly one record, got ' . count($rows) . '.');
+
+        $affected = $model::upsert($rows, $uniqueBy, $update);
+
+        if ($notify && $rows) {
+            event(new RecordsUpserted($model, $rows, (array) $uniqueBy));
+        }
+
+        return $affected;
+    }
  
 }
  

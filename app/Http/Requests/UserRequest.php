@@ -47,7 +47,9 @@ class UserRequest extends FormRequest
             'recovery_phone' => ['nullable', 'digits_between:10,11'],
             'address'        => ['required', 'string'],
 
-            'passport_file'  => ['nullable', 'image', 'max:2048'],
+             'department_ids'   => ['required', 'array', 'min:1', 'max:2'],
+            'department_ids.*' => ['integer', 'distinct', 'exists:departments,id'],
+            'passport'       => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048', 'dimensions:min_width=150,min_height=150'],
         ];
     }
 
@@ -72,3 +74,8 @@ class UserRequest extends FormRequest
  *   temp password generated server-side, or trigger an invite/reset-link flow)
  * - email_verified_at, timestamps
  */
+
+
+
+
+

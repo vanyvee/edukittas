@@ -164,13 +164,13 @@ Route::middleware(['auth.any:web,student,guardian', 'ready','demo.readonly'])->g
         Route::post('grades/compile', [GradeController::class, 'compile'])->middleware('can:compile-grades');
         Route::post('grades/reopen', [GradeController::class, 'reopen'])->middleware('can:reopen-grades');
         // school colour theme: leadership only (same list as the other leadership gates)
-        Route::put('school/theme', [SchoolThemeController::class, 'update'])->middleware('can:manage-school-theme');
+        Route::put('school/theme', [SchoolController::class, 'update'])->middleware('can:manage-school-theme');
         
         // registering staff (leadership): dropdown lists, create, and re-send the invitation
-        Route::middleware('can:manage-staff')->group(function () {
-            Route::get('staff/options', [StaffController::class, 'options']);
-            Route::post('staff', [StaffController::class, 'store']);
-            Route::post('staff/{user:uuid}/invitation', [StaffController::class, 'resend']);
+        Route::middleware('can:manage-user')->group(function () {
+            Route::get('user/options', [UserController::class, 'options']);
+            Route::post('user', [UserController::class, 'store']);
+            Route::post('user/{user:uuid}/invitation', [UserController::class, 'resend']);
         });
 
         // registering students: leadership only
@@ -204,9 +204,9 @@ Route::middleware(['auth.any:web,student,guardian', 'ready','demo.readonly'])->g
 });
 // Staff activation (public). The GET only shows the app, whose page reads the link's expires and signature.
 // The POST must carry that same signature, and sets the username and password.
-Route::get('staff/activate/{uuid}', fn () => view('app'))->name('staff.activate.show');
-Route::post('staff/activate/{user:uuid}', [StaffActivationController::class, 'store'])
-    ->middleware(['signed', 'throttle:10,10'])->name('staff.activate');
+Route::get('user/activate/{uuid}', fn () => view('app'))->name('user.activate.show');
+Route::post('user/activate/{user:uuid}', [UserController::class, 'store'])
+    ->middleware(['signed', 'throttle:10,10'])->name('user.activate');
 
 // Guardian claim link (public): the GET only shows the app; the POST carries the same signature and sets the password.
 Route::get('guardian/claim/{uuid}', fn () => view('app'))->name('guardian.claim.show');
