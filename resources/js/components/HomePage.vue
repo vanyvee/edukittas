@@ -99,13 +99,13 @@ const mealsTranslate = computed(() => {
     <!-- ══ LEFT COLUMN (60%) ══════════════════════════════════════════════ -->
     <div class="col-left">
 
-      <!-- Brand banner -->
+      <!-- Brand banner
       <div class="brand-banner">
         <p class="welcome">you're welcome to</p>
         <h1 class="brand-title">
           <span class="glow">Tasty</span><span class="glow glow--b">Byti</span>
         </h1>
-      </div>
+      </div> -->
 
       <!-- Media carousel — no gap, flush below banner -->
       <div

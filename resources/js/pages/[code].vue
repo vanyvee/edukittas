@@ -22,9 +22,6 @@ const school   = ref(null)
 const loading  = ref(true)
 const notFound = ref(false)
 
-// The school's `a / b / c` theme -> your theme ids ('' is the default palette). Adjust to taste.
-const THEME_OF = { a: '', b: 'theme1', c: 'theme2' }
-
 const html        = document.documentElement
 const themeBefore = html.dataset.theme
 const titleBefore = document.title
@@ -51,7 +48,7 @@ const load = async () => {
 
   try {
     school.value = fromServer ?? (await axios.get(`/public/schools/by-code/${encodeURIComponent(code)}`)).data
-    applyTheme(THEME_OF[school.value.theme] ?? '')
+    applyTheme(school.value.theme === 'default' ? '' : (school.value.theme || ''))
     document.title = school.value.name
   } catch {
     school.value = null

@@ -10,12 +10,13 @@ import MainCarousel2     from '@/components/MainCarousel2.vue'
 import HomePage    from '@/components/HomePage.vue'
 import LoginForm   from '@/components/LoginForm.vue'
 import RegisterForm from '@/components/RegisterForm.vue'
+import SettingsView from '@/components/SettingsView.vue'
 
 // Your existing carousel slides (school project components — swap for TastyByti later)
-import Cbt     from '@/components/Cbt.vue'
-import Staff   from '@/components/Staff.vue'
-import Grade   from '@/components/Grade.vue'
-import MyClass from '@/components/MyClass.vue'
+import Cbt     from '@/components/school/Cbt.vue'
+import Staff   from '@/components/school/Staff.vue'
+import Grade   from '@/components/school/Grade.vue'
+import MyClass from '@/components/school/MyClass.vue'
 
 // Lazy — staff components only downloaded when needed
 // const KitchenScreen  = defineAsyncComponent(() => import('@/components/staff/KitchenScreen.vue'))
@@ -55,7 +56,7 @@ const navItems = computed(() => {
     items.push(
       { key: 'Login',    label: 'Login',    icon: '🔑' },
       { key: 'Register', label: 'Register', icon: '📝' },
-       { key: 'Stock', label: 'Stock', icon: '📝' },
+      { key: 'Settings', label: 'Settings', icon: '⚙️' },
     )
   }
 
@@ -63,27 +64,7 @@ const navItems = computed(() => {
     items.push({ key: 'Logout', label: 'Logout', icon: '🚪', action: true })
   }
 
-  // Register still visible for ceo/admin even when logged in
-  if (auth.isCeo || auth.isAdmin) {
-    items.push({ key: 'Register', label: 'Register', icon: '📝' })
-  }
-
-  if (auth.isStaff) {
-    items.push({ key: 'Orders', label: 'Orders', icon: '🧾' })
-  }
-  if (auth.isCook) {
-    items.push({ key: 'Kitchen', label: 'Kitchen', icon: '👨‍🍳' })
-  }
-  if (auth.canViewAnalytics) {
-    items.push({ key: 'Analytics', label: 'Analytics', icon: '📊' })
-  }
-  if (auth.isCeo || auth.isSupervisor) {
-    items.push({ key: 'Products', label: 'Products', icon: '🍽️' })
-  }
-  if (auth.isCustomer) {
-    items.push({ key: 'Profile', label: 'Profile', icon: '👤' })
-  }
-
+ 
   return items
 })
 
@@ -116,34 +97,9 @@ const handleAction = async (key) => {
     </template>
 
     <!-- Guest sections -->
-    <template #Login>
-      <LoginForm />
-    </template>
-
-    <template #Register>
-      <RegisterForm />
-    </template>
-
-
-    <template #Stock>
-      <RawMaterial />
-    </template>
-    <!-- Staff sections — v-if adds role protection on top -->
-    <!-- <template #Orders>
-      <AllOrders v-if="auth.isStaff.value" />
-    </template> -->
-
-    <!-- <template #Kitchen>
-      <KitchenScreen v-if="auth.isCook.value" />
-    </template> -->
-
-    <!-- <template #Analytics>
-      <Analytics v-if="auth.canViewAnalytics.value" />
-    </template> -->
-
-    <!-- <template #Products>
-      <ProductManager v-if="auth.isCeo.value || auth.isSupervisor.value" />
-    </template> -->
-
+    <template #Login><LoginForm /> </template>
+    <template #Register><RegisterForm /> </template>
+   <template #Settings><SettingsView /></template>
+   
   </MainView>
 </template>

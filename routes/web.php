@@ -1,5 +1,12 @@
 <?php
 
+
+
+
+use App\Http\Controllers\SchoolController;
+use App\Http\Controllers\UserController;
+use App\Http\Controllers\StudentController;
+use App\Http\Controllers\GuardianClaimController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CbtController;
 use App\Http\Controllers\GradeController;
@@ -8,6 +15,7 @@ use App\Models\Cbt;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LandingController;
 use App\Http\Controllers\PublicController;
+/*
 /*
 |--------------------------------------------------------------------------
 | 1. GUEST: no login needed
@@ -30,6 +38,12 @@ Route::prefix('public')->group(function () {
     Route::post('schools/{id}/enquiries', [PublicController::class, 'enquire'])->whereNumber('id')->middleware('throttle:5,10');
     Route::post('affiliates', [PublicController::class, 'applyAffiliate'])->middleware('throttle:5,10');
     Route::get('demo', [PublicController::class, 'demo'])->middleware('throttle:60,1');
+
+    // School sign-up (multipart form with images) and the lists its dropdowns need
+    Route::get('lgas', [SchoolController::class, 'lgas'])->middleware('throttle:60,1');
+    Route::get('departments', [SchoolController::class, 'departments'])->middleware('throttle:60,1');
+    Route::post('schools/register', [SchoolController::class, 'store'])->middleware('throttle:10,10');
+
 });
 
 
@@ -149,6 +163,24 @@ Route::middleware(['auth.any:web,student,guardian', 'ready','demo.readonly'])->g
         // leadership only
         Route::post('grades/compile', [GradeController::class, 'compile'])->middleware('can:compile-grades');
         Route::post('grades/reopen', [GradeController::class, 'reopen'])->middleware('can:reopen-grades');
+        // school colour theme: leadership only (same list as the other leadership gates)
+        Route::put('school/theme', [SchoolThemeController::class, 'update'])->middleware('can:manage-school-theme');
+        
+        // registering staff (leadership): dropdown lists, create, and re-send the invitation
+        Route::middleware('can:manage-staff')->group(function () {
+            Route::get('staff/options', [StaffController::class, 'options']);
+            Route::post('staff', [StaffController::class, 'store']);
+            Route::post('staff/{user:uuid}/invitation', [StaffController::class, 'resend']);
+        });
+
+        // registering students: leadership only
+        Route::middleware('can:register-students')->group(function () {
+            Route::get('students/options', [StudentController::class, 'options']);
+            Route::post('students', [StudentController::class, 'store']);
+        });
+
+         // a student's details: leadership, or the form teacher of the student's class (the gate runs in the controller)
+        Route::put('students/{student:uuid}', [StudentController::class, 'update']);
 
         // managing teachers
         Route::middleware('can:manage-teachers')->group(function () {
@@ -170,4 +202,15 @@ Route::middleware(['auth.any:web,student,guardian', 'ready','demo.readonly'])->g
         });
     });
 });
+// Staff activation (public). The GET only shows the app, whose page reads the link's expires and signature.
+// The POST must carry that same signature, and sets the username and password.
+Route::get('staff/activate/{uuid}', fn () => view('app'))->name('staff.activate.show');
+Route::post('staff/activate/{user:uuid}', [StaffActivationController::class, 'store'])
+    ->middleware(['signed', 'throttle:10,10'])->name('staff.activate');
+
+// Guardian claim link (public): the GET only shows the app; the POST carries the same signature and sets the password.
+Route::get('guardian/claim/{uuid}', fn () => view('app'))->name('guardian.claim.show');
+Route::post('guardian/claim/{guardian:uuid}', [GuardianClaimController::class, 'store'])
+    ->middleware(['signed', 'throttle:10,10'])->name('guardian.claim');
+
 Route::get('/{any}', fn () => view('app'))->where('any', '.*');

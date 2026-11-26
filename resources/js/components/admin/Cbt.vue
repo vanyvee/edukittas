@@ -1,6 +1,6 @@
 <script setup>
 import { provide, ref, } from 'vue'
-import { useMainStore } from '../stores/mainStore';
+import { useMainStore } from '../../stores/mainStore.js';
 import PcProfilePanel from './PcProfilePanel.vue';
 import MobileProfilePanel from './MobileProfilePanel.vue';
 import AssignTeacher from './AssignTeacher.vue';

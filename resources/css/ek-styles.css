@@ -1,0 +1,258 @@
+/* ═══════════════════════════════════════════════════════════
+   EDUKITTAS STYLE LAYER
+   Colour themes   → [data-theme="..."]   (App.vue, unchanged)
+   Shape/feel      → [data-style="..."]   (this file)
+   No data-style = "flat" = your current look.
+   Every colour below comes from your theme tokens, so any
+   palette you add later works with every style automatically.
+═══════════════════════════════════════════════════════════ */
+
+:root {
+  --ek-radius: 0.5rem;
+  --ek-radius-lg: 0.75rem;
+  --ek-ease: cubic-bezier(.2, .9, .25, 1);
+  --ek-spring: cubic-bezier(.2, 1.25, .35, 1);
+}
+
+/* ── Per-style tokens ───────────────────────────────────── */
+[data-style="glass"]   { --ek-radius: 1rem;    --ek-radius-lg: 1.6rem; }
+[data-style="elastic"] { --ek-radius: .9rem;   --ek-radius-lg: 1.7rem; }
+[data-style="soft"] {
+  --ek-radius: 1rem;
+  --ek-radius-lg: 1.75rem;
+  --neu-base:  var(--surface-300);
+  --neu-ink:   var(--surface-900);
+  --neu-dark:  color-mix(in oklch, var(--neu-base) 78%, black);
+  --neu-light: color-mix(in oklch, var(--neu-base) 50%, white);
+}
+
+/* ── Page backdrops (glass needs something to refract) ──── */
+[data-style="glass"] body,
+[data-style="glass"] .ek-backdrop {
+  background:
+    radial-gradient(ellipse at 12% 10%, color-mix(in oklch, var(--primary-500) 45%, transparent), transparent 40%),
+    radial-gradient(ellipse at 90% 20%, color-mix(in oklch, var(--accent-500) 30%, transparent), transparent 35%),
+    radial-gradient(ellipse at 60% 95%, color-mix(in oklch, var(--secondary-500) 30%, transparent), transparent 40%),
+    linear-gradient(135deg, var(--surface-900), color-mix(in oklch, var(--surface-900) 65%, black));
+  background-attachment: fixed;
+  color: var(--surface-300);
+}
+[data-style="soft"] body,
+[data-style="soft"] .ek-backdrop { background: var(--neu-base); color: var(--neu-ink); }
+
+/* ═══════════════════════════ BUTTON ═══════════════════════ */
+.ek-btn {
+  --tone-300: var(--primary-300);
+  --tone-500: var(--primary-500);
+  --tone-700: var(--primary-700);
+  --tone-900: var(--primary-900);
+  --fg: var(--surface-300);
+  --on-tone: var(--on-primary);
+
+  position: relative;
+  display: inline-flex; align-items: center; justify-content: center; gap: .5rem;
+  font-weight: 600; line-height: 1; white-space: nowrap;
+  border: 1px solid transparent;
+  border-radius: var(--ek-radius);
+  background: var(--tone-900);
+  color: var(--fg);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: transform .2s var(--ek-ease), box-shadow .2s var(--ek-ease),
+              background .2s, color .2s, border-color .2s;
+}
+.ek-btn:hover  { background: var(--tone-700); }
+.ek-btn:active { transform: scale(.98); }
+.ek-btn:focus-visible { outline: 2px solid var(--tone-300); outline-offset: 2px; }
+.ek-btn:disabled { opacity: .55; cursor: not-allowed; pointer-events: none; }
+
+.ek-btn--sm { height: 2.25rem; padding: 0 1rem;   font-size: .8rem; }
+.ek-btn--md { height: 2.75rem; padding: 0 1.5rem; font-size: .875rem; }
+.ek-btn--lg { height: 3rem;    padding: 0 2rem;   font-size: 1rem; }
+.ek-btn--block { display: flex; width: 100%; }
+
+.ek-btn--secondary { --on-tone: var(--on-secondary); --tone-300: var(--secondary-300); --tone-500: var(--secondary-500); --tone-700: var(--secondary-700); --tone-900: var(--secondary-900); }
+.ek-btn--danger    { --on-tone: #fff; --tone-300: var(--danger-300);    --tone-500: var(--danger-500);    --tone-700: var(--danger-700);    --tone-900: var(--danger-900); }
+.ek-btn--success   { --on-tone: var(--surface-900); --tone-300: var(--success-300);   --tone-500: var(--success-500);   --tone-700: var(--success-700);   --tone-900: var(--success-900); }
+.ek-btn--ghost     { --tone-300: var(--neutral-300);   --tone-500: var(--neutral-500);   --tone-700: var(--neutral-700);   --tone-900: var(--neutral-900);
+                     background: transparent; border-color: var(--tone-500); color: var(--tone-300); }
+.ek-btn--ghost:hover { background: color-mix(in oklch, var(--tone-500) 20%, transparent); }
+
+.ek-spinner {
+  width: 1em; height: 1em; border-radius: 50%;
+  border: 2px solid currentColor; border-right-color: transparent;
+  animation: ek-spin .7s linear infinite;
+}
+@keyframes ek-spin { to { transform: rotate(360deg); } }
+
+/* — GLASS — */
+[data-style="glass"] .ek-btn {
+  --fg: #fff;
+  background: linear-gradient(145deg,
+    color-mix(in oklch, var(--tone-300) 42%, transparent),
+    color-mix(in oklch, var(--tone-500) 16%, transparent));
+  border-color: color-mix(in oklch, var(--tone-300) 60%, transparent);
+  box-shadow: inset 0 1px 0 #ffffff66, inset 0 -1px 0 #ffffff18, 0 10px 24px #0005;
+  backdrop-filter: blur(16px) saturate(165%);
+  -webkit-backdrop-filter: blur(16px) saturate(165%);
+  text-shadow: 0 1px 8px #0006;
+}
+[data-style="glass"] .ek-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: inset 0 1px 0 #ffffff88, 0 18px 34px #0006,
+              0 0 24px color-mix(in oklch, var(--tone-300) 30%, transparent);
+}
+[data-style="glass"] .ek-btn:active { transform: translateY(1px) scale(.98); }
+[data-style="glass"] .ek-btn--ghost { background: linear-gradient(145deg, #ffffff30, #ffffff0b); border-color: #ffffff45; }
+
+/* — SOFT (neumorphic) — */
+[data-style="soft"] .ek-btn {
+  --fg: color-mix(in oklch, var(--tone-700) 85%, var(--neu-ink));
+  background: var(--neu-base);
+  border-color: transparent;
+  box-shadow: 7px 7px 14px var(--neu-dark), -7px -7px 14px var(--neu-light);
+}
+[data-style="soft"] .ek-btn:hover  { transform: translateY(-2px); background: var(--neu-base); }
+[data-style="soft"] .ek-btn:active { transform: scale(.98);
+  box-shadow: inset 4px 4px 8px var(--neu-dark), inset -4px -4px 8px var(--neu-light); }
+[data-style="soft"] .ek-btn--ghost { --fg: color-mix(in oklch, var(--neu-ink) 65%, var(--neu-base)); }
+
+/* — ELASTIC — solid pill with spring press — */
+[data-style="elastic"] .ek-btn {
+  background: var(--tone-500);
+  --fg: var(--on-tone);
+  box-shadow: 0 7px 18px -8px color-mix(in oklch, var(--tone-500) 70%, transparent);
+  transition: transform .35s var(--ek-spring), box-shadow .25s, background .2s;
+}
+[data-style="elastic"] .ek-btn:hover  { background: var(--tone-500); transform: translateY(-2px) scale(1.03); }
+[data-style="elastic"] .ek-btn:active { transform: scale(.94); }
+[data-style="elastic"] .ek-btn--ghost { background: transparent; --fg: var(--tone-300); box-shadow: none; }
+
+/* ═══════════════════════════ CARD ═════════════════════════ */
+.ek-card {
+  background: var(--surface-900);
+  color: var(--surface-300);
+  border: 1px solid var(--surface-700);
+  border-radius: var(--ek-radius-lg);
+}
+.ek-card--p-none { padding: 0; }
+.ek-card--p-sm   { padding: .75rem; }
+.ek-card--p-md   { padding: 1.25rem; }
+.ek-card--p-lg   { padding: 2rem; }
+.ek-card--inset  { background: color-mix(in oklch, var(--surface-900) 70%, black); border-color: transparent; }
+
+[data-style="glass"] .ek-card {
+  position: relative; isolation: isolate; overflow: hidden;
+  background: linear-gradient(145deg, #ffffff38, #ffffff0d 48%, #ffffff18);
+  border-color: #ffffff45;
+  box-shadow: inset 0 1px 0 #ffffff66, inset 0 -1px 0 #ffffff18, 0 14px 32px #0005;
+  backdrop-filter: blur(20px) saturate(165%);
+  -webkit-backdrop-filter: blur(20px) saturate(165%);
+}
+[data-style="glass"] .ek-card::after {
+  content: ""; position: absolute; left: 10%; right: 10%; top: 1px; height: 1px;
+  background: linear-gradient(90deg, transparent, #ffffffcc, transparent); pointer-events: none;
+}
+[data-style="glass"] .ek-card--inset { background: #00000026; box-shadow: inset 0 2px 8px #0005; }
+
+[data-style="soft"] .ek-card {
+  background: var(--neu-base); color: var(--neu-ink); border-color: transparent;
+  box-shadow: 12px 12px 28px var(--neu-dark), -12px -12px 28px var(--neu-light);
+}
+[data-style="soft"] .ek-card--inset {
+  box-shadow: inset 6px 6px 12px var(--neu-dark), inset -6px -6px 12px var(--neu-light);
+}
+
+[data-style="elastic"] .ek-card {
+  background: var(--surface-300); color: var(--surface-900); border-color: transparent;
+  box-shadow: 0 20px 25px -12px color-mix(in oklch, var(--surface-900) 25%, transparent);
+}
+[data-style="elastic"] .ek-card--inset {
+  background: linear-gradient(135deg,
+    color-mix(in oklch, var(--primary-300) 25%, var(--surface-300)), var(--surface-300));
+  box-shadow: none;
+}
+
+/* ═══════════════════════════ TABS ═════════════════════════ */
+.ek-tabs__track {
+  position: relative; isolation: isolate; display: flex; gap: 4px; padding: 4px;
+  border-radius: calc(var(--ek-radius) + 5px);
+  background: var(--surface-700);
+  touch-action: pan-y;
+}
+.ek-tabs__indicator {
+  position: absolute; z-index: -1; top: 4px; bottom: 4px; left: 0;
+  border-radius: var(--ek-radius);
+  background: var(--primary-500);
+  pointer-events: none; will-change: left, width, transform;
+}
+.ek-tabs__indicator.is-ready {
+  transition: left .48s var(--ek-ease), width .48s var(--ek-ease);
+}
+.ek-tab {
+  flex: 1; min-width: 0; display: flex; align-items: center; justify-content: center; gap: .4rem;
+  padding: .8rem .5rem; border-radius: var(--ek-radius);
+  font-size: .8rem; font-weight: 700;
+  color: color-mix(in oklch, var(--surface-300) 78%, var(--surface-700));
+  -webkit-tap-highlight-color: transparent;
+  transition: color .25s, transform .25s;
+}
+.ek-tab[aria-selected="true"] { color: var(--surface-300); transform: translateY(-.5px); }
+.ek-tab:focus-visible { outline: 2px solid var(--primary-300); outline-offset: -2px; }
+.ek-tabs__panel { touch-action: pan-y; }
+
+/* — GLASS — */
+[data-style="glass"] .ek-tabs__track {
+  background: #03081755; border: 1px solid #ffffff20;
+  box-shadow: inset 0 2px 8px #0005;
+  backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+}
+[data-style="glass"] .ek-tabs__indicator {
+  background: linear-gradient(145deg, #ffffff59, color-mix(in oklch, var(--primary-300) 22%, transparent));
+  border: 1px solid #ffffff88;
+  box-shadow: inset 0 1px 0 #ffffffb3, inset 0 -2px 5px #ffffff18, 0 5px 18px #0005,
+              0 0 22px color-mix(in oklch, var(--primary-300) 25%, transparent);
+  backdrop-filter: blur(20px) saturate(180%); -webkit-backdrop-filter: blur(20px) saturate(180%);
+}
+[data-style="glass"] .ek-tab { color: #e6ecff99; }
+[data-style="glass"] .ek-tab[aria-selected="true"] { color: #fff; text-shadow: 0 1px 10px #ffffff55; }
+
+/* — SOFT — */
+[data-style="soft"] .ek-tabs__track {
+  background: var(--neu-base); padding: 8px; gap: 8px;
+  box-shadow: inset 5px 5px 10px var(--neu-dark), inset -5px -5px 10px var(--neu-light);
+}
+[data-style="soft"] .ek-tabs__indicator {
+  top: 8px; bottom: 8px; background: var(--neu-base);
+  box-shadow: 5px 5px 10px var(--neu-dark), -5px -5px 10px var(--neu-light);
+}
+[data-style="soft"] .ek-tab { color: color-mix(in oklch, var(--neu-ink) 65%, var(--neu-base)); }
+[data-style="soft"] .ek-tab[aria-selected="true"] { color: var(--primary-700); }
+
+/* — ELASTIC — indicator stretches as it travels — */
+[data-style="elastic"] .ek-tabs__track { background: color-mix(in oklch, var(--surface-300) 90%, var(--primary-300)); }
+[data-style="elastic"] .ek-tabs__indicator {
+  background: var(--primary-500); border-radius: calc(var(--ek-radius) + 2px);
+  box-shadow: 0 7px 18px -8px color-mix(in oklch, var(--primary-500) 70%, transparent);
+}
+[data-style="elastic"] .ek-tabs__indicator.is-ready { transition-timing-function: var(--ek-spring); }
+[data-style="elastic"] .ek-tabs__indicator.morph { animation: ek-morph .58s cubic-bezier(.2,.8,.2,1); }
+[data-style="elastic"] .ek-tab { color: color-mix(in oklch, var(--surface-900) 68%, var(--surface-300)); }
+[data-style="elastic"] .ek-tab[aria-selected="true"] { color: var(--on-primary); }
+@keyframes ek-morph {
+  0%   { transform: scaleX(1); }
+  28%  { transform: scaleX(1.16); }
+  55%  { transform: scaleX(.94); }
+  78%  { transform: scaleX(1.035); }
+  100% { transform: scaleX(1); }
+}
+
+/* ── Fallbacks & accessibility ──────────────────────────── */
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  [data-style="glass"] .ek-card,
+  [data-style="glass"] .ek-btn,
+  [data-style="glass"] .ek-tabs__track { background: color-mix(in oklch, var(--surface-700) 92%, transparent); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ek-btn, .ek-tab, .ek-tabs__indicator { transition-duration: .01ms !important; animation: none !important; }
+}

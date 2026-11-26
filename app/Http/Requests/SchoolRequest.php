@@ -53,7 +53,7 @@ class RegisterSchoolRequest extends FormRequest
             'school.current_session'  => ['required', 'digits:4', 'integer'],
             'school.current_term'     => ['required', 'in:1,2,3'],
             'school.result_template'  => ['nullable', 'in:a,b,c'],
-            'school.theme'            => ['nullable', 'in:a,b,c'],
+            'school.theme'            => ['nullable', \Illuminate\Validation\Rule::exists('themes', 'code')->where('is_active', true)],
 
             'user'             => ['required', 'array'],
             'user.surname'     => ['required', 'string', 'max:20'],

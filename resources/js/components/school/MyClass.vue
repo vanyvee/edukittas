@@ -1,13 +1,13 @@
 <script setup>
 import { provide, ref, } from 'vue'
-import { useMainStore } from '../stores/mainStore';
-import PcProfilePanel from './PcProfilePanel.vue';
-import MobileProfilePanel from './MobileProfilePanel.vue';
-import MyAccordionNew from './MyAccordionNew.vue';
-import AccordionNavBar from './AccordionNavBar.vue';
+import { useMainStore } from '../../stores/mainStore.js';
+import PcProfilePanel from '@/components/PcProfilePanel.vue';
+import MobileProfilePanel from '@/components/MobileProfilePanel.vue';
+import MyAccordionNew from '@/components/MyAccordionNew.vue';
+import AccordionNavBar from '@/components/AccordionNavBar.vue';
 
 //import StudentRowList from './StudentRowList.vue';
-import StudentListItem from './StudentListItem.vue';
+import StudentListItem from '@/components/school/StudentListItem.vue';
 
 
 const store =  useMainStore()
