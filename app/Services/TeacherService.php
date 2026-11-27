@@ -5,7 +5,6 @@ namespace App\Services;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
-use Illuminate\Validation\ValidationException;
 
 /**
  * Everything about teachers. A teacher is a User whose `role` is 'teacher'. Registering a staff
@@ -43,19 +42,7 @@ class TeacherService extends UserService
         return $user;
     }
 
-    /**
-     * WHAT IT DOES: Checks whether a user is linked to the given school through the departments
-     *    link table.
-     *
-     * USED WHEN: Inside findTeacherInSchool.
-     *
-     * GIVES BACK: true or false.
-     */
-    public function belongsToSchool(User $user, int $schoolId): bool
-    {
-        return $user->departments()->wherePivot('school_id', $schoolId)->exists();
-    }
-
+    
     /**
      * WHAT IT DOES: Lists every teacher in the school, each with a count of how many class and
      *    subject rows they currently have.
@@ -77,75 +64,6 @@ class TeacherService extends UserService
                 ->where('school_id', $schoolId)])
             ->orderBy('surname')
             ->get(['id', 'uuid', 'pix', 'surname', 'first_name', 'other_name', 'phone']);
-    }
-
-    // ------------------------------------------------------------------
-    // Create, update, remove
-    // ------------------------------------------------------------------
-
-    /**
-     * WHAT IT DOES: Registers a new teacher in the school. If the person already has an account
-     *    (same NIN or phone) nothing is created; the answer asks the admin to confirm instead.
-     *
-     * USED WHEN: POST /teachers, when the admin adds a teacher.
-     *
-     * GIVES BACK: An array whose `status` is "created", "already_exists" (already in this school)
-     *    or "confirmation_required" (with a preview of the existing person).
-     */
-    public function createTeacher(array $data, int $schoolId): array
-    {
-        return $this->register($data + ['role' => 'teacher'], $schoolId);
-    }
-
-    /**
-     * WHAT IT DOES: After the admin confirms, links an existing account to this school. It refuses
-     *    if that account is not a teacher, because role is a single column on the user and
-     *    confirming cannot change it.
-     *
-     * USED WHEN: POST /teachers/confirm, after createTeacher answered "confirmation_required".
-     *
-     * GIVES BACK: The user.
-     */
-    public function addExistingTeacher(string $uuid, int $schoolId, int $departmentId): User
-    {
-        $user = User::where('uuid', $uuid)->firstOrFail();
-
-        if ($user->role !== 'teacher') {
-            throw ValidationException::withMessages(['uuid' => 'This account is not a teacher account.']);
-        }
-
-        return $this->assignExistingUserDepartment($uuid, $schoolId, $departmentId);
-    }
-
-    /**
-     * WHAT IT DOES: Saves changes to a teacher's basic details (names, phone).
-     *
-     * USED WHEN: PUT /teachers/{teacher}.
-     *
-     * GIVES BACK: The updated teacher.
-     */
-    public function updateTeacher(User $teacher, array $data): User
-    {
-        $teacher->update($data);
-
-        return $teacher;
-    }
-
-    /**
-     * WHAT IT DOES: Takes the teacher out of THIS school only: deletes their class and subject
-     *    rows here and removes their department link here. The account itself stays, because it
-     *    may belong to other schools. Both steps happen together or not at all.
-     *
-     * USED WHEN: DELETE /teachers/{teacher}.
-     *
-     * GIVES BACK: Nothing.
-     */
-    public function removeFromSchool(User $teacher, int $schoolId): void
-    {
-        $this->transaction(function () use ($teacher, $schoolId) {
-            DB::table(self::TABLE)->where(['user_id' => $teacher->id, 'school_id' => $schoolId])->delete();
-            $teacher->departments()->wherePivot('school_id', $schoolId)->detach();
-        });
     }
 
     // ------------------------------------------------------------------

@@ -5,8 +5,8 @@ namespace App\Services;
 
 use App\Models\School;
 use App\Models\User;
-use App\Notifications\StaffAddedToSchoolNotification;
-use App\Notifications\StaffInvitationNotification;
+use App\Notifications\UserAddedToSchoolNotification;
+use App\Notifications\UserInvitationNotification;
 use Illuminate\Support\Arr;
 use Throwable;
 /**
@@ -55,8 +55,50 @@ public function register(array $data, int $schoolId): array
 }   
 
 
+/**
+     * WHAT IT DOES: Checks whether a user is linked to the given school through the departments
+     *    link table.
+     *
+     * USED WHEN: Inside findTeacherInSchool.
+     *
+     * GIVES BACK: true or false.
+     */
+    public function belongsToSchool(User $user, int $schoolId): bool
+    {
+        return $user->departments()->wherePivot('school_id', $schoolId)->exists();
+    }
+
+    /**
+     * WHAT IT DOES: Saves changes to a teacher's basic details (names, phone).
+     *
+     * USED WHEN: PUT /teachers/{teacher}.
+     *
+     * GIVES BACK: The updated teacher.
+     */
+    public function updateTeacher(User $teacher, array $data): User
+    {
+        $teacher->update($data);
+
+        return $teacher;
+    }
 
 
+    /**
+     * WHAT IT DOES: Takes the teacher out of THIS school only: deletes their class and subject
+     *    rows here and removes their department link here. The account itself stays, because it
+     *    may belong to other schools. Both steps happen together or not at all.
+     *
+     * USED WHEN: DELETE /teachers/{teacher}.
+     *
+     * GIVES BACK: Nothing.
+     */
+    public function removeFromSchool(User $teacher, int $schoolId): void
+    {
+        $this->transaction(function () use ($teacher, $schoolId) {
+            DB::table(self::TABLE)->where(['user_id' => $teacher->id, 'school_id' => $schoolId])->delete();
+            $teacher->departments()->wherePivot('school_id', $schoolId)->detach();
+        });
+    }
 
 
 
