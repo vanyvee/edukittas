@@ -66,6 +66,7 @@ declare module 'vue' {
     SoftUnmount: typeof import('./resources/js/components/SoftUnmount.vue')['default']
     Staff: typeof import('./resources/js/components/school/Staff.vue')['default']
     StaffRegisterForm: typeof import('./resources/js/components/school/StaffRegisterForm.vue')['default']
+    'StaffRegisterForm (1)': typeof import('./resources/js/components/school/StaffRegisterForm (1).vue')['default']
     Student: typeof import('./resources/js/components/Student.vue')['default']
     Student2: typeof import('./resources/js/components/Student2.vue')['default']
     StudentDetails: typeof import('./resources/js/components/StudentDetails.vue')['default']
